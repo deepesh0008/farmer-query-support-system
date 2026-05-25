@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Weather Insights - Feature Preview</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="../assets/css/styles.css">
+  <style>
+    body {
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      min-height: 100vh;
+    }
+    .navbar {
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: white;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+    .preview-header {
+      text-align: center;
+      padding: 3rem 0;
+      color: white;
+      background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+    }
+    .preview-header h1 {
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+    }
+    .preview-header p {
+      font-size: 1.2rem;
+      opacity: 0.95;
+    }
+    .demo-section {
+      background: white;
+      padding: 2rem;
+      margin: 2rem 0;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .demo-text h3 {
+      color: #f39c12;
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+    }
+    .demo-visual {
+      background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+      padding: 2rem;
+      border-radius: 8px;
+      text-align: center;
+      color: white;
+      margin-bottom: 1rem;
+    }
+    .weather-widget {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+    .weather-item {
+      padding: 1rem;
+      background: linear-gradient(135deg, rgba(243, 156, 18, 0.1) 0%, rgba(230, 126, 34, 0.1) 100%);
+      border-radius: 8px;
+      text-align: center;
+      border: 2px solid #f39c12;
+    }
+    .weather-item .icon {
+      font-size: 2rem;
+      color: #f39c12;
+      margin-bottom: 0.5rem;
+    }
+    .weather-item .value {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #333;
+    }
+    .weather-item .label {
+      font-size: 0.9rem;
+      color: #666;
+      margin-top: 0.3rem;
+    }
+    .forecast-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+    .forecast-day {
+      padding: 1rem;
+      background: #f8f9fa;
+      border-radius: 8px;
+      text-align: center;
+      border-left: 4px solid #f39c12;
+    }
+    .forecast-day .day {
+      font-weight: bold;
+      color: #f39c12;
+      margin-bottom: 0.5rem;
+    }
+    .forecast-day .icon {
+      font-size: 2rem;
+      color: #f39c12;
+      margin: 0.5rem 0;
+    }
+    .forecast-day .temp {
+      font-weight: bold;
+      color: #333;
+    }
+    .features-list {
+      list-style: none;
+      padding: 0;
+    }
+    .features-list li {
+      padding: 0.8rem 0;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .features-list li:last-child {
+      border-bottom: none;
+    }
+    .features-list i {
+      color: #f39c12;
+      font-size: 1.2rem;
+    }
+    .recommendations {
+      padding: 1.5rem;
+      background: linear-gradient(135deg, rgba(243, 156, 18, 0.1) 0%, rgba(230, 126, 34, 0.1) 100%);
+      border-left: 4px solid #f39c12;
+      border-radius: 4px;
+      margin: 1rem 0;
+    }
+    .login-section {
+      text-align: center;
+      padding: 2rem;
+      background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+      color: white;
+      border-radius: 12px;
+      margin: 2rem 0;
+    }
+    .login-btn {
+      padding: 1rem 2rem;
+      background: white;
+      color: #f39c12;
+      text-decoration: none;
+      border-radius: 6px;
+      font-weight: 600;
+      display: inline-block;
+      transition: transform 0.3s;
+    }
+    .login-btn:hover {
+      transform: scale(1.05);
+    }
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #f39c12;
+      text-decoration: none;
+      font-weight: 600;
+      margin: 1rem 0;
+    }
+    .back-btn:hover {
+      color: #e67e22;
+    }
+  </style>
+  <script>
+    // Automatic redirect if already logged in
+    (function() {
+      const token = localStorage.getItem('token') || localStorage.getItem('accessToken');
+      const userStr = localStorage.getItem('user');
+      if (token && userStr) {
+        try {
+          const user = JSON.parse(userStr);
+          if (user && user.role) {
+            let dashboardUrl = 'farmer-dashboard-enhanced.html';
+            if (user.role === 'officer') {
+              dashboardUrl = 'officer-dashboard.html';
+            } else if (user.role === 'admin') {
+              dashboardUrl = 'admin-dashboard.html';
+            }
+            window.location.href = `${dashboardUrl}?tab=weather`;
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      }
+    })();
+  </script>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="container" style="display: flex; justify-content: space-between; align-items: center;">
+      <a href="../index.html" style="text-decoration: none; display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+        <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #2ecc71 0%, #3498db 100%); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 1.5rem;">
+          <i class="fas fa-leaf"></i>
+        </div>
+        <span style="font-weight: 700; color: #333; font-size: 1.1rem;">Farmer Query</span>
+      </a>
+      <div style="display: flex; gap: 1rem;">
+        <a href="../index.html" class="back-btn">
+          <i class="fas fa-arrow-left"></i> Back to Home
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Preview Header -->
+  <section class="preview-header">
+    <div class="container">
+      <h1><i class="fas fa-cloud-sun"></i> Weather Insights</h1>
+      <p>Get real-time weather data and 5-day forecasts to plan your farming perfectly</p>
+    </div>
+  </section>
+
+  <!-- Main Content -->
+  <div class="container">
+    <!-- Demo Section -->
+    <div class="demo-section">
+      <h2 style="text-align: center; color: #333; margin-bottom: 2rem;">Current Weather Display</h2>
+      
+      <!-- Current Weather -->
+      <div class="demo-visual">
+        <h3 style="margin-top: 0; color: white; font-size: 1.3rem;">Your Location</h3>
+        <p style="margin-bottom: 1rem; opacity: 0.9;">Nasik, Maharashtra</p>
+        <div style="font-size: 4rem; margin: 1rem 0;">
+          <i class="fas fa-cloud-sun"></i>
+        </div>
+        <p style="font-size: 2rem; margin: 0;">28°C</p>
+        <p style="margin: 0.5rem 0; opacity: 0.9;">Partly Cloudy</p>
+      </div>
+
+      <!-- Weather Details -->
+      <div class="weather-widget">
+        <div class="weather-item">
+          <div class="icon"><i class="fas fa-water"></i></div>
+          <div class="value">65%</div>
+          <div class="label">Humidity</div>
+        </div>
+        <div class="weather-item">
+          <div class="icon"><i class="fas fa-wind"></i></div>
+          <div class="value">12 km/h</div>
+          <div class="label">Wind Speed</div>
+        </div>
+        <div class="weather-item">
+          <div class="icon"><i class="fas fa-droplet"></i></div>
+          <div class="value">0 mm</div>
+          <div class="label">Rainfall</div>
+        </div>
+        <div class="weather-item">
+          <div class="icon"><i class="fas fa-compress"></i></div>
+          <div class="value">1013 mb</div>
+          <div class="label">Pressure</div>
+        </div>
+      </div>
+
+      <!-- Features -->
+      <div style="margin-top: 2rem; padding: 1.5rem; background: linear-gradient(135deg, rgba(243, 156, 18, 0.1) 0%, rgba(230, 126, 34, 0.1) 100%); border-radius: 8px;">
+        <h3 style="color: #f39c12; margin-top: 0;">Real-Time Weather Features</h3>
+        <ul class="features-list">
+          <li><i class="fas fa-check-circle"></i> Temperature and "feels like" readings</li>
+          <li><i class="fas fa-check-circle"></i> Humidity and dew point</li>
+          <li><i class="fas fa-check-circle"></i> Wind speed and direction</li>
+          <li><i class="fas fa-check-circle"></i> Rainfall and precipitation probability</li>
+          <li><i class="fas fa-check-circle"></i> Atmospheric pressure</li>
+          <li><i class="fas fa-check-circle"></i> UV index information</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 5-Day Forecast -->
+    <div class="demo-section">
+      <h2 style="color: #333; margin-bottom: 1.5rem;"><i class="fas fa-calendar-alt"></i> 5-Day Forecast</h2>
+      
+      <div class="forecast-grid">
+        <div class="forecast-day">
+          <div class="day">Today</div>
+          <div class="icon"><i class="fas fa-cloud-sun"></i></div>
+          <div class="temp">28° / 22°C</div>
+          <p style="font-size: 0.9rem; margin: 0.3rem 0; color: #666;">Partly Cloudy</p>
+        </div>
+        <div class="forecast-day">
+          <div class="day">Tomorrow</div>
+          <div class="icon"><i class="fas fa-cloud-rain"></i></div>
+          <div class="temp">26° / 20°C</div>
+          <p style="font-size: 0.9rem; margin: 0.3rem 0; color: #666;">Light Rain</p>
+        </div>
+        <div class="forecast-day">
+          <div class="day">Day 3</div>
+          <div class="icon"><i class="fas fa-cloud"></i></div>
+          <div class="temp">25° / 19°C</div>
+          <p style="font-size: 0.9rem; margin: 0.3rem 0; color: #666;">Cloudy</p>
+        </div>
+        <div class="forecast-day">
+          <div class="day">Day 4</div>
+          <div class="icon"><i class="fas fa-sun"></i></div>
+          <div class="temp">30° / 23°C</div>
+          <p style="font-size: 0.9rem; margin: 0.3rem 0; color: #666;">Sunny</p>
+        </div>
+        <div class="forecast-day">
+          <div class="day">Day 5</div>
+          <div class="icon"><i class="fas fa-sun"></i></div>
+          <div class="temp">31° / 24°C</div>
+          <p style="font-size: 0.9rem; margin: 0.3rem 0; color: #666;">Sunny</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Farm Management Tips -->
+    <div class="demo-section">
+      <h2 style="color: #333; margin-bottom: 1.5rem;"><i class="fas fa-leaf"></i> Farming Recommendations Based on Weather</h2>
+      
+      <div class="recommendations">
+        <strong style="color: #f39c12; font-size: 1.1rem;"><i class="fas fa-lightbulb"></i> Today's Recommendations:</strong>
+        <ul style="margin: 1rem 0 0 0; padding-left: 1.5rem; color: #666;">
+          <li>Good day for pesticide spraying (low wind speed)</li>
+          <li>Don't irrigate today - rain expected tomorrow</li>
+          <li>Ideal conditions for harvesting wheat</li>
+          <li>Check for pest activity due to high humidity</li>
+        </ul>
+      </div>
+
+      <div class="recommendations">
+        <strong style="color: #f39c12; font-size: 1.1rem;"><i class="fas fa-info-circle"></i> Tomorrow's Forecast Alert:</strong>
+        <ul style="margin: 1rem 0 0 0; padding-left: 1.5rem; color: #666;">
+          <li>Light rain expected - good for newly planted seedlings</li>
+          <li>Don't schedule field operations</li>
+          <li>Ensure proper drainage in low-lying areas</li>
+          <li>Avoid fertilizer application</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Key Benefits -->
+    <div class="demo-section">
+      <h3 style="color: #f39c12; margin-bottom: 1rem;">Why Weather Insights Matter</h3>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+        <div>
+          <h4 style="color: #f39c12;"><i class="fas fa-check" style="color: #f39c12;"></i> Better Planning</h4>
+          <p style="color: #666;">Schedule irrigation, pesticide spraying, and harvesting perfectly</p>
+        </div>
+        <div>
+          <h4 style="color: #f39c12;"><i class="fas fa-check" style="color: #f39c12;"></i> Disease Prevention</h4>
+          <p style="color: #666;">Know when conditions favor crop diseases and take preventive action</p>
+        </div>
+        <div>
+          <h4 style="color: #f39c12;"><i class="fas fa-check" style="color: #f39c12;"></i> Reduce Waste</h4>
+          <p style="color: #666;">Apply water and fertilizer only when weather conditions allow</p>
+        </div>
+        <div>
+          <h4 style="color: #f39c12;"><i class="fas fa-check" style="color: #f39c12;"></i> Increase Yield</h4>
+          <p style="color: #666;">Make data-driven decisions to maximize your crop output</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Login Section -->
+    <div class="login-section">
+      <h2><i class="fas fa-lock"></i> Get Real-Time Weather Updates Now!</h2>
+      <p style="margin-bottom: 1.5rem;">Login or register to access detailed weather forecasts and get smart farming recommendations based on real-time weather data.</p>
+      <a href="login-enhanced.html" class="login-btn">
+        <i class="fas fa-sign-in-alt"></i> Login Now
+      </a>
+      <p style="margin-top: 1rem;">Don't have an account? <a href="register-enhanced.html" style="color: white; text-decoration: underline;">Register here</a></p>
+    </div>
+
+    <!-- Footer -->
+    <div style="text-align: center; padding: 2rem 0; border-top: 1px solid #eee; margin-top: 2rem;">
+      <a href="../index.html" class="back-btn">
+        <i class="fas fa-arrow-left"></i> Back to Home
+      </a>
+    </div>
+  </div>
+</body>
+</html>

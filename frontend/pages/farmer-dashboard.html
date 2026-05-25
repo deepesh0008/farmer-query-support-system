@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Farmer Dashboard - Query Support</title>
+  <link rel="stylesheet" href="../assets/css/styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body onload="initDashboard()">
+  <script src="../assets/js/api.js"></script>
+
+  <nav class="navbar">
+    <div class="container">
+      <div class="navbar-brand">
+        <a href="../index.html" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+          <h1><i class="fas fa-leaf"></i> Farmer Query Support</h1>
+        </a>
+      </div>
+      <div class="navbar-menu">
+        <span id="userGreeting"></span>
+        <a href="javascript:logout()" class="nav-link">Logout</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="dashboard">
+    <div class="sidebar">
+      <div class="sidebar-item active" onclick="switchTab('submit')">
+        <a href="javascript:void(0)"><i class="fas fa-plus"></i> Submit Query</a>
+      </div>
+      <div class="sidebar-item" onclick="switchTab('queries')">
+        <a href="javascript:void(0)"><i class="fas fa-list"></i> My Queries</a>
+      </div>
+      <div class="sidebar-item" onclick="switchTab('weather')">
+        <a href="javascript:void(0)"><i class="fas fa-cloud"></i> Weather</a>
+      </div>
+      <div class="sidebar-item" onclick="switchTab('market')">
+        <a href="javascript:void(0)"><i class="fas fa-chart-bar"></i> Market Prices</a>
+      </div>
+      <div class="sidebar-item" onclick="switchTab('schemes')">
+        <a href="javascript:void(0)"><i class="fas fa-file-contract"></i> Schemes</a>
+      </div>
+    </div>
+
+    <div class="main-content">
+      <!-- Submit Query Tab -->
+      <div id="submitTab" class="tab-content">
+        <div class="dashboard-header">
+          <h2>Submit a Query</h2>
+          <p>Get expert advice for your agricultural questions</p>
+        </div>
+
+        <div id="alertMessage" class="alert"></div>
+
+        <div class="card">
+          <form id="queryForm">
+            <div class="form-group">
+              <label for="queryType">Query Type</label>
+              <select id="queryType" name="queryType" required>
+                <option value="">Select type</option>
+                <option value="text">Text</option>
+                <option value="voice">Voice</option>
+                <option value="image">Image</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="query">Your Question/Description</label>
+              <textarea id="query" name="query" rows="4" placeholder="Describe your farming issue..." required></textarea>
+            </div>
+
+            <div class="form-group">
+              <label for="cropType">Crop Type</label>
+              <input type="text" id="cropType" name="cropType" placeholder="e.g., Rice, Wheat" required>
+            </div>
+
+            <div class="form-group">
+              <label for="season">Season</label>
+              <select id="season" name="season">
+                <option value="">Select season</option>
+                <option value="kharif">Kharif (Monsoon)</option>
+                <option value="rabi">Rabi (Winter)</option>
+                <option value="summer">Summer</option>
+                <option value="perennial">Perennial</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="image">Attach Image (Optional)</label>
+              <input type="file" id="image" name="image" accept="image/*">
+              <small>Upload photo of affected crop for disease detection</small>
+            </div>
+
+            <div class="form-group">
+              <label for="symptomsDuration">Symptoms Duration</label>
+              <select id="symptomsDuration" name="symptomsDuration">
+                <option value="">Select duration</option>
+                <option value="1-3 days">1-3 days</option>
+                <option value="1-2 weeks">1-2 weeks</option>
+                <option value="2-4 weeks">2-4 weeks</option>
+                <option value="1+ months">1+ months</option>
+              </select>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Submit Query</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- My Queries Tab -->
+      <div id="queriesTab" class="tab-content" style="display: none;">
+        <div class="dashboard-header">
+          <h2>My Queries</h2>
+          <button class="btn btn-secondary btn-small" onclick="refreshQueries()">Refresh</button>
+        </div>
+
+        <div id="queriesList" class="card">
+          <p>Loading queries...</p>
+        </div>
+      </div>
+
+      <!-- Weather Tab -->
+      <div id="weatherTab" class="tab-content" style="display: none;">
+        <div class="dashboard-header">
+          <h2>Weather Information</h2>
+        </div>
+
+        <div class="card">
+          <div class="form-group">
+            <label for="weatherCity">City/State</label>
+            <input type="text" id="weatherCity" placeholder="Enter city or state name">
+            <button class="btn btn-primary btn-small mt-2" onclick="getWeather()">Get Weather</button>
+          </div>
+        </div>
+
+        <div id="weatherInfo" style="display: none;" class="card">
+          <h3>Current Weather</h3>
+          <div id="weatherDetails"></div>
+        </div>
+      </div>
+
+      <!-- Market Prices Tab -->
+      <div id="marketTab" class="tab-content" style="display: none;">
+        <div class="dashboard-header">
+          <h2>Market Prices</h2>
+        </div>
+
+        <div class="card">
+          <div class="form-group">
+            <label for="marketCrop">Crop Name</label>
+            <input type="text" id="marketCrop" placeholder="e.g., Rice, Wheat">
+          </div>
+          <div class="form-group">
+            <label for="marketState">State</label>
+            <input type="text" id="marketState" placeholder="Your state">
+          </div>
+          <button class="btn btn-primary btn-small" onclick="getMarketPrices()">Search Prices</button>
+        </div>
+
+        <div id="pricesList" class="card" style="display: none;">
+          <h3>Current Prices</h3>
+          <div id="pricesDetails"></div>
+        </div>
+      </div>
+
+      <!-- Schemes Tab -->
+      <div id="schemesTab" class="tab-content" style="display: none;">
+        <div class="dashboard-header">
+          <h2>Government Schemes</h2>
+        </div>
+
+        <div class="card">
+          <div class="form-group">
+            <label for="schemeSearch">Search Schemes</label>
+            <input type="text" id="schemeSearch" placeholder="Search for schemes...">
+            <button class="btn btn-primary btn-small mt-2" onclick="searchSchemes()">Search</button>
+          </div>
+        </div>
+
+        <div id="schemesList" class="card">
+          <p>Loading schemes...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function initDashboard() {
+      requireAuth();
+      const user = getCurrentUser();
+      if (user) {
+        document.getElementById('userGreeting').textContent = `Welcome, ${user.profile?.firstName || user.email}!`;
+      }
+      loadQueries();
+      loadSchemes();
+    }
+
+    function switchTab(tabName) {
+      // Hide all tabs
+      document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.style.display = 'none';
+      });
+      
+      // Remove active class from sidebar items
+      document.querySelectorAll('.sidebar-item').forEach(item => {
+        item.classList.remove('active');
+      });
+
+      // Show selected tab
+      document.getElementById(tabName + 'Tab').style.display = 'block';
+      
+      // Add active class to clicked item
+      event.target.closest('.sidebar-item').classList.add('active');
+    }
+
+    document.getElementById('queryForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const queryText = document.getElementById('query').value;
+      const queryType = document.getElementById('queryType').value;
+      const cropType = document.getElementById('cropType').value;
+      const season = document.getElementById('season').value;
+      const symptomsDuration = document.getElementById('symptomsDuration').value;
+      const imageFile = document.getElementById('image').files[0];
+
+      try {
+        let media = {};
+
+        // Upload image if provided
+        if (imageFile) {
+          const uploadResult = await api.uploadMedia(imageFile);
+          media.imageUrl = uploadResult.data.upload.secure_url;
+          media.imagePublicId = uploadResult.data.upload.public_id;
+          media.imageMetadata = {
+            uploadedAt: new Date(),
+            size: uploadResult.data.upload.bytes,
+            format: uploadResult.data.upload.format,
+            dimensions: { width: uploadResult.data.upload.width, height: uploadResult.data.upload.height },
+          };
+        }
+
+        const queryData = {
+          originalQuery: queryText,
+          queryType,
+          context: {
+            cropType,
+            season,
+            symptomsDuration,
+          },
+          media,
+        };
+
+        const result = await api.createQuery(queryData);
+        showAlert('Query submitted successfully! AI is generating a response.', 'success');
+        
+        document.getElementById('queryForm').reset();
+        setTimeout(() => {
+          switchTab('queries');
+          loadQueries();
+        }, 2000);
+      } catch (error) {
+        showAlert('Error submitting query: ' + error.message, 'error');
+      }
+    });
+
+    async function loadQueries() {
+      try {
+        const result = await api.listQueries(1, 50);
+        const queriesList = document.getElementById('queriesList');
+        
+        if (result.items.length === 0) {
+          queriesList.innerHTML = '<p>No queries yet. Submit one to get started!</p>';
+          return;
+        }
+
+        queriesList.innerHTML = result.items.map(q => `
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h3>${q.originalQuery.substring(0, 50)}...</h3>
+                <small>Status: <strong>${q.status}</strong> | Created: ${new Date(q.createdAt).toLocaleDateString()}</small>
+              </div>
+              <span class="badge">${q.queryType}</span>
+            </div>
+            <div class="card-body">
+              <p><strong>Crop:</strong> ${q.context?.cropType || 'N/A'}</p>
+              ${q.aiResponse?.primaryResponse ? `
+                <p><strong>AI Response:</strong></p>
+                <p>${q.aiResponse.primaryResponse}</p>
+              ` : '<p>AI is generating a response...</p>'}
+            </div>
+            <button class="btn btn-small btn-secondary mt-2" onclick="viewQueryDetail('${q._id}')">View Details</button>
+          </div>
+        `).join('');
+      } catch (error) {
+        document.getElementById('queriesList').innerHTML = `<p class="text-error">Error loading queries: ${error.message}</p>`;
+      }
+    }
+
+    async function loadSchemes() {
+      try {
+        const result = await api.listSchemes(1, 10);
+        const schemesList = document.getElementById('schemesList');
+        
+        schemesList.innerHTML = result.items.map(s => `
+          <div class="card">
+            <div class="card-header">
+              <h3>${s.schemeName}</h3>
+            </div>
+            <div class="card-body">
+              <p>${s.description?.substring(0, 100) || 'No description'}...</p>
+              <p><strong>Level:</strong> ${s.govtLevel || 'N/A'}</p>
+            </div>
+          </div>
+        `).join('');
+      } catch (error) {
+        console.error('Error loading schemes:', error);
+      }
+    }
+
+    async function getWeather() {
+      const city = document.getElementById('weatherCity').value;
+      if (!city) {
+        showAlert('Please enter a city or state', 'error');
+        return;
+      }
+
+      try {
+        const result = await api.getCurrentWeather(null, null, city, null);
+        const weatherInfo = document.getElementById('weatherInfo');
+        const details = document.getElementById('weatherDetails');
+        
+        details.innerHTML = `
+          <p><strong>Location:</strong> ${result.data.name}</p>
+          <p><strong>Temperature:</strong> ${result.data.main.temp}°C</p>
+          <p><strong>Condition:</strong> ${result.data.weather[0].main}</p>
+          <p><strong>Humidity:</strong> ${result.data.main.humidity}%</p>
+          <p><strong>Wind Speed:</strong> ${result.data.wind.speed} m/s</p>
+        `;
+        weatherInfo.style.display = 'block';
+      } catch (error) {
+        showAlert('Error fetching weather: ' + error.message, 'error');
+      }
+    }
+
+    async function getMarketPrices() {
+      const crop = document.getElementById('marketCrop').value;
+      const state = document.getElementById('marketState').value;
+
+      try {
+        const result = await api.getMarketPrices(crop, state, null);
+        const pricesList = document.getElementById('pricesList');
+        const details = document.getElementById('pricesDetails');
+
+        if (result.data.length === 0) {
+          details.innerHTML = '<p>No prices found for the selected crop and state.</p>';
+        } else {
+          details.innerHTML = result.data.map(p => `
+            <div style="padding: 0.5rem 0; border-bottom: 1px solid #eee;">
+              <p><strong>${p.crop}</strong> - ${p.market}</p>
+              <p>₹${p.pricePerQuintal}/${p.unit}</p>
+            </div>
+          `).join('');
+        }
+        pricesList.style.display = 'block';
+      } catch (error) {
+        showAlert('Error fetching prices: ' + error.message, 'error');
+      }
+    }
+
+    async function searchSchemes() {
+      const query = document.getElementById('schemeSearch').value;
+      if (!query) {
+        showAlert('Enter a search term', 'error');
+        return;
+      }
+
+      try {
+        const result = await api.searchSchemes(query);
+        const schemesList = document.getElementById('schemesList');
+        
+        schemesList.innerHTML = result.data.map(s => `
+          <div class="card">
+            <h3>${s.schemeName}</h3>
+            <p>${s.description?.substring(0, 150) || 'No description'}...</p>
+          </div>
+        `).join('');
+      } catch (error) {
+        showAlert('Error searching schemes: ' + error.message, 'error');
+      }
+    }
+
+    function refreshQueries() {
+      loadQueries();
+    }
+
+    function viewQueryDetail(queryId) {
+      // Navigate to query detail page
+      window.location.href = `query-detail.html?id=${queryId}`;
+    }
+
+    function showAlert(message, type) {
+      const alertDiv = document.getElementById('alertMessage');
+      alertDiv.textContent = message;
+      alertDiv.className = `alert alert-${type} show`;
+      setTimeout(() => {
+        alertDiv.classList.remove('show');
+      }, 5000);
+    }
+  </script>
+</body>
+</html>

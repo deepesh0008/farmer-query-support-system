@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Market Prices - Feature Preview</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="../assets/css/styles.css">
+  <style>
+    body {
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      min-height: 100vh;
+    }
+    .navbar {
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: white;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+    .preview-header {
+      text-align: center;
+      padding: 3rem 0;
+      color: white;
+      background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+    }
+    .preview-header h1 {
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+    }
+    .preview-header p {
+      font-size: 1.2rem;
+      opacity: 0.95;
+    }
+    .demo-section {
+      background: white;
+      padding: 2rem;
+      margin: 2rem 0;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .price-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5rem 0;
+    }
+    .price-table th {
+      background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+      color: white;
+      padding: 1rem;
+      text-align: left;
+      font-weight: 600;
+    }
+    .price-table td {
+      padding: 0.8rem 1rem;
+      border-bottom: 1px solid #eee;
+    }
+    .price-table tr:hover {
+      background: #f8f9fa;
+    }
+    .crop-name {
+      font-weight: 600;
+      color: #333;
+    }
+    .price-up {
+      color: #27ae60;
+      font-weight: 600;
+    }
+    .price-down {
+      color: #e74c3c;
+      font-weight: 600;
+    }
+    .market-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .market-card {
+      padding: 1.5rem;
+      background: linear-gradient(135deg, rgba(231, 76, 60, 0.1) 0%, rgba(192, 57, 43, 0.1) 100%);
+      border-radius: 8px;
+      border-left: 4px solid #e74c3c;
+    }
+    .market-card h4 {
+      color: #e74c3c;
+      margin: 0 0 0.5rem 0;
+    }
+    .market-card p {
+      color: #666;
+      font-size: 0.95rem;
+      margin: 0.3rem 0;
+    }
+    .features-list {
+      list-style: none;
+      padding: 0;
+    }
+    .features-list li {
+      padding: 0.8rem 0;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .features-list li:last-child {
+      border-bottom: none;
+    }
+    .features-list i {
+      color: #e74c3c;
+      font-size: 1.2rem;
+    }
+    .chart-placeholder {
+      background: linear-gradient(135deg, #f0f0f0 0%, #e0e0e0 100%);
+      padding: 2rem;
+      border-radius: 8px;
+      text-align: center;
+      color: #999;
+      margin: 1.5rem 0;
+    }
+    .login-section {
+      text-align: center;
+      padding: 2rem;
+      background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+      color: white;
+      border-radius: 12px;
+      margin: 2rem 0;
+    }
+    .login-btn {
+      padding: 1rem 2rem;
+      background: white;
+      color: #e74c3c;
+      text-decoration: none;
+      border-radius: 6px;
+      font-weight: 600;
+      display: inline-block;
+      transition: transform 0.3s;
+    }
+    .login-btn:hover {
+      transform: scale(1.05);
+    }
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #e74c3c;
+      text-decoration: none;
+      font-weight: 600;
+      margin: 1rem 0;
+    }
+    .back-btn:hover {
+      color: #c0392b;
+    }
+  </style>
+  <script>
+    // Automatic redirect if already logged in
+    (function() {
+      const token = localStorage.getItem('token') || localStorage.getItem('accessToken');
+      const userStr = localStorage.getItem('user');
+      if (token && userStr) {
+        try {
+          const user = JSON.parse(userStr);
+          if (user && user.role) {
+            let dashboardUrl = 'farmer-dashboard-enhanced.html';
+            if (user.role === 'officer') {
+              dashboardUrl = 'officer-dashboard.html';
+            } else if (user.role === 'admin') {
+              dashboardUrl = 'admin-dashboard.html';
+            }
+            window.location.href = `${dashboardUrl}?tab=market`;
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      }
+    })();
+  </script>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="container" style="display: flex; justify-content: space-between; align-items: center;">
+      <a href="../index.html" style="text-decoration: none; display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+        <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #2ecc71 0%, #3498db 100%); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 1.5rem;">
+          <i class="fas fa-leaf"></i>
+        </div>
+        <span style="font-weight: 700; color: #333; font-size: 1.1rem;">Farmer Query</span>
+      </a>
+      <div style="display: flex; gap: 1rem;">
+        <a href="../index.html" class="back-btn">
+          <i class="fas fa-arrow-left"></i> Back to Home
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Preview Header -->
+  <section class="preview-header">
+    <div class="container">
+      <h1><i class="fas fa-chart-bar"></i> Market Prices</h1>
+      <p>Get real-time commodity prices across markets to sell at the best rates</p>
+    </div>
+  </section>
+
+  <!-- Main Content -->
+  <div class="container">
+    <!-- Current Prices -->
+    <div class="demo-section">
+      <h2 style="text-align: center; color: #333; margin-bottom: 1rem;"><i class="fas fa-tags"></i> Today's Market Prices</h2>
+      <p style="text-align: center; color: #666; margin-bottom: 1.5rem;">Prices updated today at 10:30 AM</p>
+      
+      <table class="price-table">
+        <thead>
+          <tr>
+            <th>Crop</th>
+            <th>Current Price</th>
+            <th>Today's Change</th>
+            <th>Best Market</th>
+            <th>Volume</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="crop-name">Wheat</td>
+            <td>₹2,150/qt</td>
+            <td class="price-up">↑ ₹25 (+1.2%)</td>
+            <td>Delhi</td>
+            <td>4,500 tons</td>
+          </tr>
+          <tr>
+            <td class="crop-name">Rice</td>
+            <td>₹3,200/qt</td>
+            <td class="price-down">↓ ₹50 (-1.5%)</td>
+            <td>Mumbai</td>
+            <td>3,200 tons</td>
+          </tr>
+          <tr>
+            <td class="crop-name">Maize</td>
+            <td>₹1,850/qt</td>
+            <td class="price-up">↑ ₹15 (+0.8%)</td>
+            <td>Bangalore</td>
+            <td>2,100 tons</td>
+          </tr>
+          <tr>
+            <td class="crop-name">Cotton</td>
+            <td>₹5,600/bale</td>
+            <td class="price-up">↑ ₹100 (+1.8%)</td>
+            <td>Gujarat</td>
+            <td>1,500 bales</td>
+          </tr>
+          <tr>
+            <td class="crop-name">Sugarcane</td>
+            <td>₹3,100/ton</td>
+            <td class="price-down">↓ ₹25 (-0.8%)</td>
+            <td>Maharashtra</td>
+            <td>5,000 tons</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Market Selection -->
+      <div style="margin-top: 2rem; padding: 1.5rem; background: linear-gradient(135deg, rgba(231, 76, 60, 0.1) 0%, rgba(192, 57, 43, 0.1) 100%); border-radius: 8px;">
+        <h3 style="color: #e74c3c; margin-top: 0;"><i class="fas fa-location-dot"></i> Compare Across Markets</h3>
+        <p style="color: #666;">View prices from major agricultural markets in your state or nearby states:</p>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem;">
+          <button style="padding: 0.8rem 1rem; background: white; border: 2px solid #e74c3c; color: #e74c3c; border-radius: 6px; cursor: pointer; font-weight: 600;">Your State Markets</button>
+          <button style="padding: 0.8rem 1rem; background: white; border: 2px solid #e74c3c; color: #e74c3c; border-radius: 6px; cursor: pointer; font-weight: 600;">Nearby States</button>
+          <button style="padding: 0.8rem 1rem; background: white; border: 2px solid #e74c3c; color: #e74c3c; border-radius: 6px; cursor: pointer; font-weight: 600;">National Average</button>
+          <button style="padding: 0.8rem 1rem; background: white; border: 2px solid #e74c3c; color: #e74c3c; border-radius: 6px; cursor: pointer; font-weight: 600;">Export Prices</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Historical Trends -->
+    <div class="demo-section">
+      <h2 style="color: #333; margin-bottom: 1rem;"><i class="fas fa-chart-line"></i> Price Trends & Analysis</h2>
+      
+      <div class="chart-placeholder">
+        <i class="fas fa-chart-line" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+        <p>Interactive price charts showing 1-month, 3-month, and 6-month trends</p>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+        <div class="market-card">
+          <h4><i class="fas fa-arrow-up"></i> Highest Growth</h4>
+          <p><strong>Cotton</strong> - ₹5,600/bale</p>
+          <p style="color: #27ae60;"><strong>↑ 8.5% this month</strong></p>
+          <p style="margin-top: 0.5rem;">Peak season approaching, demand high</p>
+        </div>
+        <div class="market-card">
+          <h4><i class="fas fa-arrow-down"></i> Best Buying Opportunity</h4>
+          <p><strong>Rice</strong> - ₹3,200/qt</p>
+          <p style="color: #e74c3c;"><strong>↓ 2.2% this month</strong></p>
+          <p style="margin-top: 0.5rem;">Oversupply in market, prices stabilizing</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Market Coverage -->
+    <div class="demo-section">
+      <h3 style="color: #e74c3c; margin-bottom: 1rem;"><i class="fas fa-globe"></i> Markets Covered Across India</h3>
+      <p style="color: #666; margin-bottom: 1.5rem;">Access prices from 250+ agricultural markets across all major states</p>
+      
+      <div class="market-grid">
+        <div class="market-card">
+          <h4><i class="fas fa-building"></i> Major Mandis</h4>
+          <p>New Delhi, Mumbai, Bangalore, Chennai, Kolkata wholesale markets</p>
+        </div>
+        <div class="market-card">
+          <h4><i class="fas fa-tractor"></i> Regional Centers</h4>
+          <p>State-level agricultural produce marketing centers</p>
+        </div>
+        <div class="market-card">
+          <h4><i class="fas fa-leaf"></i> Local Markets</h4>
+          <p>District and taluka-level regulated markets</p>
+        </div>
+        <div class="market-card">
+          <h4><i class="fas fa-ship"></i> Export Prices</h4>
+          <p>International commodity exchange rates</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Features -->
+    <div class="demo-section">
+      <h3 style="color: #e74c3c; margin-bottom: 1rem;"><i class="fas fa-star"></i> Key Features</h3>
+      <ul class="features-list">
+        <li><i class="fas fa-check-circle"></i> Real-time price updates every 30 minutes</li>
+        <li><i class="fas fa-check-circle"></i> Historical price trends and charts</li>
+        <li><i class="fas fa-check-circle"></i> Price comparison across multiple markets</li>
+        <li><i class="fas fa-check-circle"></i> Alert system for price changes</li>
+        <li><i class="fas fa-check-circle"></i> Export and wholesale rate information</li>
+        <li><i class="fas fa-check-circle"></i> Volume and demand data</li>
+      </ul>
+    </div>
+
+    <!-- Smart Selling Tips -->
+    <div class="demo-section">
+      <h3 style="color: #e74c3c; margin-bottom: 1rem;"><i class="fas fa-lightbulb"></i> Smart Selling Tips</h3>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+        <div style="padding: 1rem; background: linear-gradient(135deg, rgba(231, 76, 60, 0.1) 0%, rgba(192, 57, 43, 0.1) 100%); border-radius: 8px;">
+          <h4 style="color: #e74c3c; margin-top: 0;"><i class="fas fa-check"></i> Best Practices</h4>
+          <ul style="padding-left: 1.5rem; color: #666; margin: 0;">
+            <li>Track 3-month trends before selling</li>
+            <li>Sell at market peaks for best returns</li>
+            <li>Compare prices across nearby markets</li>
+            <li>Don't sell when prices are lowest</li>
+            <li>Plan harvest timing based on trends</li>
+          </ul>
+        </div>
+        <div style="padding: 1rem; background: linear-gradient(135deg, rgba(231, 76, 60, 0.1) 0%, rgba(192, 57, 43, 0.1) 100%); border-radius: 8px;">
+          <h4 style="color: #e74c3c; margin-top: 0;"><i class="fas fa-info-circle"></i> Market Insights</h4>
+          <ul style="padding-left: 1.5rem; color: #666; margin: 0;">
+            <li>Seasonal demand variations</li>
+            <li>Weather impact on prices</li>
+            <li>Government policy updates</li>
+            <li>International market trends</li>
+            <li>Buying center locations</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Login Section -->
+    <div class="login-section">
+      <h2><i class="fas fa-lock"></i> Get Best Price Insights Now!</h2>
+      <p style="margin-bottom: 1.5rem;">Login or register to access real-time market prices and make smart selling decisions to maximize your profits.</p>
+      <a href="login-enhanced.html" class="login-btn">
+        <i class="fas fa-sign-in-alt"></i> Login Now
+      </a>
+      <p style="margin-top: 1rem;">Don't have an account? <a href="register-enhanced.html" style="color: white; text-decoration: underline;">Register here</a></p>
+    </div>
+
+    <!-- Footer -->
+    <div style="text-align: center; padding: 2rem 0; border-top: 1px solid #eee; margin-top: 2rem;">
+      <a href="../index.html" class="back-btn">
+        <i class="fas fa-arrow-left"></i> Back to Home
+      </a>
+    </div>
+  </div>
+</body>
+</html>

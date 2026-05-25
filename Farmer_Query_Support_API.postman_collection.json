@@ -1,0 +1,554 @@
+{
+  "info": {
+    "_postman_id": "fqs-api-collection",
+    "name": "Farmer Query Support System API",
+    "description": "Complete API collection for the Farmer Query Support System",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"firstName\": \"Rajesh\",\n  \"lastName\": \"Sharma\",\n  \"email\": \"rajesh@example.com\",\n  \"phoneNumber\": \"9876543210\",\n  \"state\": \"Punjab\",\n  \"role\": \"farmer\",\n  \"password\": \"SecurePass123\",\n  \"confirmPassword\": \"SecurePass123\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/v1/auth/register",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "v1", "auth", "register"]
+            }
+          }
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"rajesh@example.com\",\n  \"password\": \"SecurePass123\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/v1/auth/login",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "v1", "auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "Get Current User",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:5000/api/v1/auth/me",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "v1", "auth", "me"]
+            }
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:5000/api/v1/auth/logout",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "v1", "auth", "logout"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Queries",
+      "item": [
+        {
+          "name": "Create Query",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"originalQuery\": \"My wheat plants have brown spots on leaves. What should I do?\",\n  \"queryType\": \"text\",\n  \"context\": {\n    \"cropType\": \"wheat\",\n    \"season\": \"rabi\",\n    \"symptomsDuration\": \"1-2 weeks\",\n    \"affectedAreaPercentage\": 30\n  },\n  \"media\": {}\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/v1/queries",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "v1", "queries"]
+            }
+          }
+        },
+        {
+          "name": "List Queries",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:5000/api/v1/queries?page=1&limit=20&status=answered",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "v1", "queries"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "20"
+                },
+                {
+                  "key": "status",
+                  "value": "answered"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Query",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:5000/api/v1/queries/{{queryId}}",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "v1", "queries", "{{queryId}}"]
+            }
+          }
+        },
+        {
+          "name": "Add Feedback",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rating\": 5,\n  \"helpful\": true,\n  \"farmerNotes\": \"Very helpful advice, will try it\",\n  \"sentiment\": \"positive\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/v1/queries/{{queryId}}/feedback",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "v1", "queries", "{{queryId}}", "feedback"]
+            }
+          }
+        },
+        {
+          "name": "Escalate Query",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"Need expert guidance\",\n  \"priority\": \"high\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/v1/queries/{{queryId}}/escalate",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "v1", "queries", "{{queryId}}", "escalate"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Weather",
+      "item": [
+        {
+          "name": "Current Weather",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:5000/api/v1/weather/current?city=Delhi",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "v1", "weather", "current"],
+              "query": [
+                {
+                  "key": "city",
+                  "value": "Delhi"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Weather Forecast",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:5000/api/v1/weather/forecast?lat=28.7041&lon=77.1025",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "v1", "weather", "forecast"],
+              "query": [
+                {
+                  "key": "lat",
+                  "value": "28.7041"
+                },
+                {
+                  "key": "lon",
+                  "value": "77.1025"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Market",
+      "item": [
+        {
+          "name": "Get Prices",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:5000/api/v1/market/prices?crop=wheat&state=Punjab",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "v1", "market", "prices"],
+              "query": [
+                {
+                  "key": "crop",
+                  "value": "wheat"
+                },
+                {
+                  "key": "state",
+                  "value": "Punjab"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Schemes",
+      "item": [
+        {
+          "name": "List Schemes",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:5000/api/v1/schemes?page=1&limit=20",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "v1", "schemes"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "20"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Scheme",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:5000/api/v1/schemes/{{schemeId}}",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "v1", "schemes", "{{schemeId}}"]
+            }
+          }
+        },
+        {
+          "name": "Search Schemes",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:5000/api/v1/schemes/search?q=subsidy",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "v1", "schemes", "search"],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "subsidy"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Escalations",
+      "item": [
+        {
+          "name": "Create Escalation",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"queryId\": \"{{queryId}}\",\n  \"category\": \"disease-complex\",\n  \"priority\": \"high\",\n  \"reason\": \"Complex disease pattern requiring expert intervention\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/v1/escalations",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "v1", "escalations"]
+            }
+          }
+        },
+        {
+          "name": "List Escalations",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:5000/api/v1/escalations?status=open",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "v1", "escalations"],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "open"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Assign Officer",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"officerId\": \"{{officerId}}\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/v1/escalations/{{escalationId}}/assign",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "v1", "escalations", "{{escalationId}}", "assign"]
+            }
+          }
+        },
+        {
+          "name": "Update Status",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"resolved\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/v1/escalations/{{escalationId}}/status",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "v1", "escalations", "{{escalationId}}", "status"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "http://localhost:5000/health",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5000",
+          "path": ["health"]
+        }
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "accessToken",
+      "value": ""
+    },
+    {
+      "key": "queryId",
+      "value": ""
+    },
+    {
+      "key": "escalationId",
+      "value": ""
+    },
+    {
+      "key": "schemeId",
+      "value": ""
+    },
+    {
+      "key": "officerId",
+      "value": ""
+    }
+  ]
+}

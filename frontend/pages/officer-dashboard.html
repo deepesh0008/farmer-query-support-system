@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Officer Portal - Query Support</title>
+  <link rel="stylesheet" href="../assets/css/styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body onload="initOfficerDashboard()">
+  <script src="../assets/js/api.js"></script>
+
+  <nav class="navbar">
+    <div class="container">
+      <div class="navbar-brand">
+        <a href="../index.html" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+          <h1><i class="fas fa-shield"></i> Officer Portal</h1>
+        </a>
+      </div>
+      <div class="navbar-menu">
+        <span id="userGreeting"></span>
+        <a href="javascript:logout()" class="nav-link">Logout</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="dashboard">
+    <div class="sidebar">
+      <div class="sidebar-item active" onclick="switchOfficerTab('dashboard')">
+        <a href="javascript:void(0)"><i class="fas fa-home"></i> Dashboard</a>
+      </div>
+      <div class="sidebar-item" onclick="switchOfficerTab('escalations')">
+        <a href="javascript:void(0)"><i class="fas fa-exclamation-triangle"></i> Escalated Queries</a>
+      </div>
+      <div class="sidebar-item" onclick="switchOfficerTab('assigned')">
+        <a href="javascript:void(0)"><i class="fas fa-tasks"></i> My Assignments</a>
+      </div>
+      <div class="sidebar-item" onclick="switchOfficerTab('schemes')">
+        <a href="javascript:void(0)"><i class="fas fa-file-contract"></i> Schemes</a>
+      </div>
+    </div>
+
+    <div class="main-content">
+      <!-- Dashboard Tab -->
+      <div id="dashboardTab" class="tab-content">
+        <div class="dashboard-header">
+          <h2>Officer Dashboard</h2>
+          <p>Manage farmer queries and provide expert guidance</p>
+        </div>
+
+        <div class="card">
+          <h3>Your Statistics</h3>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 1rem;">
+            <div style="padding: 1rem; background: #f0f0f0; border-radius: 0.5rem;">
+              <h4>Pending Escalations</h4>
+              <p style="font-size: 2rem; color: var(--secondary-color);" id="pendingCount">0</p>
+            </div>
+            <div style="padding: 1rem; background: #f0f0f0; border-radius: 0.5rem;">
+              <h4>Resolved</h4>
+              <p style="font-size: 2rem; color: var(--primary-color);" id="resolvedCount">0</p>
+            </div>
+            <div style="padding: 1rem; background: #f0f0f0; border-radius: 0.5rem;">
+              <h4>In Progress</h4>
+              <p style="font-size: 2rem; color: #f39c12;" id="inProgressCount">0</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Recent Escalations</h3>
+          <div id="recentEscalations">
+            <p>Loading...</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Escalations Tab -->
+      <div id="escalationsTab" class="tab-content" style="display: none;">
+        <div class="dashboard-header">
+          <h2>Escalated Queries</h2>
+          <button class="btn btn-secondary btn-small" onclick="loadEscalations()">Refresh</button>
+        </div>
+
+        <div id="escalationsList" class="card">
+          <p>Loading escalations...</p>
+        </div>
+      </div>
+
+      <!-- Assigned Tab -->
+      <div id="assignedTab" class="tab-content" style="display: none;">
+        <div class="dashboard-header">
+          <h2>My Assigned Queries</h2>
+        </div>
+
+        <div id="assignedList" class="card">
+          <p>Loading assigned queries...</p>
+        </div>
+      </div>
+
+      <!-- Schemes Tab -->
+      <div id="schemesTab" class="tab-content" style="display: none;">
+        <div class="dashboard-header">
+          <h2>Government Schemes</h2>
+        </div>
+
+        <div class="card">
+          <div class="form-group">
+            <label for="schemeFilter">Filter by Government Level</label>
+            <select id="schemeFilter" onchange="filterSchemes()">
+              <option value="">All Schemes</option>
+              <option value="central">Central Government</option>
+              <option value="state">State Government</option>
+              <option value="district">District Level</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="schemesList" class="card">
+          <p>Loading schemes...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Escalation Response Modal -->
+  <div id="responseModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; padding: 2rem;">
+    <div style="background: white; margin: auto; max-width: 600px; padding: 2rem; border-radius: 0.5rem; margin-top: 5rem;">
+      <h3>Respond to Escalation</h3>
+      <div class="form-group mt-3">
+        <label for="responseText">Your Response</label>
+        <textarea id="responseText" rows="5" placeholder="Provide detailed guidance..."></textarea>
+      </div>
+      <div class="form-group">
+        <label for="updateStatus">Update Status</label>
+        <select id="updateStatus">
+          <option value="in_progress">In Progress</option>
+          <option value="resolved">Resolved</option>
+          <option value="closed">Closed</option>
+        </select>
+      </div>
+      <button class="btn btn-primary" onclick="submitResponse()">Submit Response</button>
+      <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+    </div>
+  </div>
+
+  <script>
+    let currentEscalationId = null;
+
+    function initOfficerDashboard() {
+      requireAuth();
+      const user = getCurrentUser();
+      if (user) {
+        document.getElementById('userGreeting').textContent = `Welcome, ${user.profile?.firstName || user.email}!`;
+      }
+      loadDashboardStats();
+      loadEscalations();
+      loadSchemes();
+    }
+
+    function switchOfficerTab(tabName) {
+      document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.style.display = 'none';
+      });
+      document.querySelectorAll('.sidebar-item').forEach(item => {
+        item.classList.remove('active');
+      });
+
+      document.getElementById(tabName + 'Tab').style.display = 'block';
+      event.target.closest('.sidebar-item').classList.add('active');
+    }
+
+    async function loadDashboardStats() {
+      try {
+        const result = await api.listEscalations(1, 100, { status: 'open' });
+        const resolved = await api.listEscalations(1, 100, { status: 'resolved' });
+        const inProgress = await api.listEscalations(1, 100, { status: 'in_progress' });
+
+        document.getElementById('pendingCount').textContent = result.total || 0;
+        document.getElementById('resolvedCount').textContent = resolved.total || 0;
+        document.getElementById('inProgressCount').textContent = inProgress.total || 0;
+
+        // Load recent escalations
+        const recent = document.getElementById('recentEscalations');
+        if (result.items.length === 0) {
+          recent.innerHTML = '<p>No pending escalations.</p>';
+        } else {
+          recent.innerHTML = result.items.slice(0, 5).map(e => `
+            <div class="card" style="margin-bottom: 1rem;">
+              <p><strong>Farmer:</strong> ${e.farmerId?.profile?.firstName || 'Unknown'}</p>
+              <p><strong>Priority:</strong> <span style="color: ${getPriorityColor(e.priority)}">${e.priority}</span></p>
+              <p><strong>Category:</strong> ${e.category || 'N/A'}</p>
+              <button class="btn btn-small btn-primary" onclick="openResponseModal('${e._id}')">Respond</button>
+            </div>
+          `).join('');
+        }
+      } catch (error) {
+        console.error('Error loading stats:', error);
+      }
+    }
+
+    async function loadEscalations() {
+      try {
+        const result = await api.listEscalations(1, 50);
+        const list = document.getElementById('escalationsList');
+
+        if (result.items.length === 0) {
+          list.innerHTML = '<p>No escalations found.</p>';
+          return;
+        }
+
+        list.innerHTML = result.items.map(e => `
+          <div class="card" style="margin-bottom: 1rem;">
+            <div class="card-header">
+              <div>
+                <h3>Escalation ID: ${e._id.substring(0, 8)}...</h3>
+                <small>Status: <strong>${e.status}</strong> | Priority: <strong style="color: ${getPriorityColor(e.priority)}">${e.priority}</strong></small>
+              </div>
+            </div>
+            <div class="card-body">
+              <p><strong>Category:</strong> ${e.category || 'N/A'}</p>
+              <p><strong>Reason:</strong> ${e.reason || 'No reason provided'}</p>
+              <p><strong>Created:</strong> ${new Date(e.escalationDate).toLocaleDateString()}</p>
+            </div>
+            <button class="btn btn-small btn-primary" onclick="openResponseModal('${e._id}')">Respond</button>
+          </div>
+        `).join('');
+      } catch (error) {
+        document.getElementById('escalationsList').innerHTML = `<p class="text-error">Error loading escalations</p>`;
+      }
+    }
+
+    async function loadSchemes() {
+      try {
+        const result = await api.listSchemes(1, 20);
+        const list = document.getElementById('schemesList');
+
+        if (result.items.length === 0) {
+          list.innerHTML = '<p>No schemes found.</p>';
+          return;
+        }
+
+        list.innerHTML = result.items.map(s => `
+          <div class="card" style="margin-bottom: 1rem;">
+            <h4>${s.schemeName}</h4>
+            <p>${s.description?.substring(0, 150) || 'No description'}...</p>
+            <p><small><strong>Level:</strong> ${s.govtLevel} | <strong>Type:</strong> ${s.schemeType}</small></p>
+          </div>
+        `).join('');
+      } catch (error) {
+        console.error('Error loading schemes:', error);
+      }
+    }
+
+    function getPriorityColor(priority) {
+      const colors = {
+        'urgent': '#e74c3c',
+        'high': '#f39c12',
+        'medium': '#3498db',
+        'low': '#95a5a6'
+      };
+      return colors[priority] || '#3498db';
+    }
+
+    function openResponseModal(escalationId) {
+      currentEscalationId = escalationId;
+      document.getElementById('responseModal').style.display = 'block';
+    }
+
+    function closeModal() {
+      document.getElementById('responseModal').style.display = 'none';
+      currentEscalationId = null;
+    }
+
+    async function submitResponse() {
+      if (!currentEscalationId) return;
+
+      try {
+        const status = document.getElementById('updateStatus').value;
+        await api.updateEscalationStatus(currentEscalationId, status);
+        
+        closeModal();
+        loadEscalations();
+        loadDashboardStats();
+        alert('Response submitted successfully!');
+      } catch (error) {
+        alert('Error submitting response: ' + error.message);
+      }
+    }
+
+    function filterSchemes() {
+      // Reload schemes with selected filter
+      loadSchemes();
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - Farmer Query Support System</title>
+  <link rel="stylesheet" href="../assets/css/enhanced-styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    .login-container {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #2ecc71 0%, #3498db 100%);
+    }
+
+    .login-card {
+      background: white;
+      padding: 3rem;
+      border-radius: 12px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+      width: 100%;
+      max-width: 450px;
+    }
+
+    .login-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .login-header h1 {
+      color: #2ecc71;
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .login-header p {
+      color: #7f8c8d;
+      font-size: 0.95rem;
+    }
+
+    .password-toggle {
+      cursor: pointer;
+      color: #3498db;
+    }
+
+    .input-group {
+      position: relative;
+      margin-bottom: 1.5rem;
+    }
+
+    .input-group input {
+      width: 100%;
+      padding-right: 40px;
+    }
+
+    .input-group .toggle-icon {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      color: #95a5a6;
+    }
+
+    .remember-forgot {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      font-size: 0.9rem;
+    }
+
+    .remember-forgot a {
+      color: #3498db;
+      text-decoration: none;
+    }
+
+    .remember-forgot a:hover {
+      text-decoration: underline;
+    }
+
+    .demo-users {
+      background: linear-gradient(135deg, rgba(52, 152, 219, 0.1) 0%, rgba(46, 204, 113, 0.1) 100%);
+      border: 1px solid #3498db;
+      border-radius: 8px;
+      padding: 1.2rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .demo-users h4 {
+      margin-bottom: 0.5rem;
+      color: #3498db;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .demo-user {
+      font-size: 0.85rem;
+      margin: 0.4rem 0;
+      font-family: monospace;
+      padding: 0.3rem 0.6rem;
+      background: white;
+      border-radius: 4px;
+      border-left: 3px solid #3498db;
+    }
+
+    .demo-user span {
+      font-weight: 600;
+      color: #2ecc71;
+    }
+
+    .demo-user .copy-btn {
+      cursor: pointer;
+      color: #3498db;
+      margin-left: 0.5rem;
+      font-size: 0.75rem;
+    }
+
+    .demo-user .copy-btn:hover {
+      color: #2ecc71;
+    }
+
+    .register-link {
+      text-align: center;
+      margin-top: 1.5rem;
+      color: #7f8c8d;
+    }
+
+    .register-link a {
+      color: #2ecc71;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .register-link a:hover {
+      text-decoration: underline;
+    }
+
+    .loading-spinner {
+      display: none;
+      text-align: center;
+      margin: 2rem 0;
+    }
+
+    @media (max-width: 500px) {
+      .login-card {
+        padding: 1.5rem;
+      }
+
+      .login-header h1 {
+        font-size: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="container">
+      <div class="navbar-brand">
+        <a href="../index.html" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+          <h1><i class="fas fa-leaf"></i> Farmer Query Support</h1>
+        </a>
+      </div>
+      <div class="navbar-menu">
+        <a href="../index.html" class="nav-link">
+          <i class="fas fa-home"></i> Home
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="login-container">
+    <div class="login-card">
+      <!-- Header -->
+      <div class="login-header">
+        <h1><i class="fas fa-leaf"></i> Farmer Query</h1>
+        <p>AI-Powered Agricultural Support System</p>
+      </div>
+
+      <!-- Alert Message -->
+      <div id="alertMessage" class="alert" style="display: none; margin-bottom: 1.5rem;"></div>
+
+      <!-- Demo Users Info -->
+      <div class="demo-users">
+        <h4><i class="fas fa-user-circle"></i> Try Demo Accounts</h4>
+        <div class="demo-user">👨‍🌾 Farmer: <span>farmer@example.com</span></div>
+        <div class="demo-user" style="font-size: 0.8rem; margin: 0.2rem 0; border-left-color: #2ecc71;">Password: <span>FarmerPass123</span></div>
+        <div class="demo-user" style="margin-top: 0.6rem;">👮 Officer: <span>officer@example.com</span></div>
+        <div class="demo-user" style="font-size: 0.8rem; margin: 0.2rem 0; border-left-color: #f39c12;">Password: <span>OfficerPass123</span></div>
+      </div>
+
+      <!-- Login Form -->
+      <form id="loginForm">
+        <!-- Email -->
+        <div class="form-group">
+          <label for="email">
+            <i class="fas fa-envelope"></i> Email Address
+          </label>
+          <div class="input-group">
+            <input type="email" id="email" name="email" placeholder="your@email.com" required autocomplete="email">
+          </div>
+        </div>
+
+        <!-- Password -->
+        <div class="form-group">
+          <label for="password">
+            <i class="fas fa-lock"></i> Password
+          </label>
+          <div class="input-group">
+            <input type="password" id="password" name="password" placeholder="••••••••" required autocomplete="current-password">
+            <span class="toggle-icon" onclick="togglePassword()">
+              <i class="fas fa-eye"></i>
+            </span>
+          </div>
+        </div>
+
+        <!-- Remember & Forgot -->
+        <div class="remember-forgot">
+          <label style="display: flex; align-items: center; gap: 0.5rem; margin: 0;">
+            <input type="checkbox" id="rememberMe" name="rememberMe">
+            <span>Remember me</span>
+          </label>
+          <a href="#forgot" onclick="showForgotPassword()">Forgot password?</a>
+        </div>
+
+        <!-- Login Button -->
+        <button type="submit" class="btn btn-primary btn-block" style="padding: 0.9rem; font-size: 1.05rem;">
+          <i class="fas fa-sign-in-alt"></i> Login
+        </button>
+
+        <!-- Loading Spinner -->
+        <div class="loading-spinner" id="loadingSpinner">
+          <div class="spinner"></div>
+          <p>Logging in...</p>
+        </div>
+      </form>
+
+      <!-- Register Link -->
+      <div class="register-link">
+        Don't have an account? 
+        <a href="register-enhanced.html"><i class="fas fa-user-plus"></i> Register Here</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="../assets/js/api.js"></script>
+  <script>
+    const apiClient = new APIClient();
+
+    // Check if already logged in and redirect
+    window.addEventListener('DOMContentLoaded', () => {
+      const token = localStorage.getItem('token') || localStorage.getItem('accessToken');
+      const userStr = localStorage.getItem('user');
+      if (token && userStr) {
+        try {
+          const user = JSON.parse(userStr);
+          if (user && user.role) {
+            let dashboardUrl = 'farmer-dashboard-enhanced.html';
+            if (user.role === 'officer') {
+              dashboardUrl = 'officer-dashboard.html';
+            } else if (user.role === 'admin') {
+              dashboardUrl = 'admin-dashboard.html';
+            }
+            showAlert('Already logged in. Redirecting to dashboard...', 'info');
+            setTimeout(() => {
+              window.location.href = dashboardUrl;
+            }, 1000);
+          }
+        } catch (e) {
+          console.error('Error parsing user:', e);
+        }
+      }
+    });
+
+    // Password toggle
+    function togglePassword() {
+      const input = document.getElementById('password');
+      const icon = event.target.closest('.toggle-icon');
+      
+      if (input.type === 'password') {
+        input.type = 'text';
+        icon.innerHTML = '<i class="fas fa-eye-slash"></i>';
+      } else {
+        input.type = 'password';
+        icon.innerHTML = '<i class="fas fa-eye"></i>';
+      }
+    }
+
+    // Show alert
+    function showAlert(message, type = 'info') {
+      const alertDiv = document.getElementById('alertMessage');
+      alertDiv.className = `alert alert-${type}`;
+      alertDiv.innerHTML = `
+        <span>${message}</span>
+        <button onclick="this.parentElement.style.display='none'" class="close-btn">&times;</button>
+      `;
+      alertDiv.style.display = 'flex';
+    }
+
+    // Handle login
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const rememberMe = document.getElementById('rememberMe').checked;
+
+      const spinner = document.getElementById('loadingSpinner');
+      spinner.style.display = 'block';
+
+      try {
+        const response = await apiClient.login(email, password);
+        console.log('Login response:', response);
+        
+        // Handle both response structures
+        let token = null;
+        let user = null;
+        
+        if (response.data) {
+          token = response.data.accessToken || response.data.token;
+          user = response.data.user;
+        } else {
+          token = response.accessToken || response.token;
+          user = response.user;
+        }
+        
+        if (response && token && user) {
+          localStorage.setItem('token', token);
+          localStorage.setItem('accessToken', token);
+          localStorage.setItem('user', JSON.stringify(user));
+          
+          if (response.data?.refreshToken || response.refreshToken) {
+            localStorage.setItem('refreshToken', response.data?.refreshToken || response.refreshToken);
+          }
+          if (rememberMe) {
+            localStorage.setItem('rememberEmail', email);
+          }
+
+          showAlert('✅ Login successful! Redirecting...', 'success');
+          
+          // Redirect based on role
+          setTimeout(() => {
+            if (user.role === 'farmer') {
+              window.location.href = 'farmer-dashboard-enhanced.html';
+            } else if (user.role === 'officer') {
+              window.location.href = 'officer-dashboard.html';
+            } else if (user.role === 'admin') {
+              window.location.href = 'admin-dashboard.html';
+            }
+          }, 1500);
+        } else {
+          showAlert('❌ Invalid response from server', 'error');
+        }
+      } catch (error) {
+        let msg = error.message;
+        if (error.errors && error.errors.length > 0) {
+          msg += ': ' + error.errors.map(e => e.message).join(', ');
+        }
+        showAlert(`❌ Login failed: ${msg}`, 'error');
+      } finally {
+        spinner.style.display = 'none';
+      }
+    });
+
+    // Load remembered email
+    window.addEventListener('load', () => {
+      const remembered = localStorage.getItem('rememberEmail');
+      if (remembered) {
+        document.getElementById('email').value = remembered;
+        document.getElementById('rememberMe').checked = true;
+      }
+    });
+
+    // Forgot password
+    function showForgotPassword() {
+      const email = prompt('Enter your email address:');
+      if (email) {
+        showAlert('✅ Check your email for password reset instructions', 'info');
+      }
+    }
+  </script>
+</body>
+</html>

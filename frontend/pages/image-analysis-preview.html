@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Image Analysis - Feature Preview</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="../assets/css/styles.css">
+  <style>
+    body {
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      min-height: 100vh;
+    }
+    .navbar {
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: white;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+    .preview-header {
+      text-align: center;
+      padding: 3rem 0;
+      color: white;
+      background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+    }
+    .preview-header h1 {
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+    }
+    .preview-header p {
+      font-size: 1.2rem;
+      opacity: 0.95;
+    }
+    .demo-section {
+      background: white;
+      padding: 2rem;
+      margin: 2rem 0;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .demo-item {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      align-items: center;
+      margin-bottom: 3rem;
+    }
+    .demo-item.reverse {
+      direction: rtl;
+    }
+    .demo-item.reverse > * {
+      direction: ltr;
+    }
+    .demo-text h3 {
+      color: #3498db;
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+    }
+    .demo-visual {
+      background: #f8f9fa;
+      padding: 1.5rem;
+      border-radius: 8px;
+      text-align: center;
+    }
+    .image-preview {
+      width: 100%;
+      max-width: 300px;
+      height: auto;
+      background: linear-gradient(135deg, #ecf0f1 0%, #bdc3c7 100%);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #7f8c8d;
+      font-size: 4rem;
+      margin: 0 auto 1rem;
+    }
+    .disease-icon {
+      font-size: 4rem;
+      color: #3498db;
+      margin-bottom: 1rem;
+    }
+    .features-list {
+      list-style: none;
+      padding: 0;
+    }
+    .features-list li {
+      padding: 0.8rem 0;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .features-list li:last-child {
+      border-bottom: none;
+    }
+    .features-list i {
+      color: #3498db;
+      font-size: 1.2rem;
+    }
+    .analysis-result {
+      padding: 1rem;
+      background: linear-gradient(135deg, rgba(52, 152, 219, 0.1) 0%, rgba(41, 128, 185, 0.1) 100%);
+      border-left: 4px solid #3498db;
+      border-radius: 4px;
+      margin: 1rem 0;
+    }
+    .analysis-result strong {
+      color: #3498db;
+    }
+    .login-section {
+      text-align: center;
+      padding: 2rem;
+      background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+      color: white;
+      border-radius: 12px;
+      margin: 2rem 0;
+    }
+    .login-section h2 {
+      margin-bottom: 1rem;
+    }
+    .login-btn {
+      padding: 1rem 2rem;
+      background: white;
+      color: #3498db;
+      text-decoration: none;
+      border-radius: 6px;
+      font-weight: 600;
+      display: inline-block;
+      transition: transform 0.3s;
+    }
+    .login-btn:hover {
+      transform: scale(1.05);
+    }
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #3498db;
+      text-decoration: none;
+      font-weight: 600;
+      margin: 1rem 0;
+    }
+    .back-btn:hover {
+      color: #2980b9;
+    }
+    .example-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      margin: 2rem 0;
+    }
+    .example-card {
+      background: #f8f9fa;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .example-image {
+      width: 100%;
+      height: 150px;
+      background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 3rem;
+    }
+    .example-info {
+      padding: 1rem;
+    }
+    .example-info h4 {
+      color: #333;
+      margin: 0 0 0.5rem 0;
+    }
+    .example-info p {
+      color: #666;
+      font-size: 0.9rem;
+      margin: 0;
+    }
+  </style>
+  <script>
+    // Automatic redirect if already logged in
+    (function() {
+      const token = localStorage.getItem('token') || localStorage.getItem('accessToken');
+      const userStr = localStorage.getItem('user');
+      if (token && userStr) {
+        try {
+          const user = JSON.parse(userStr);
+          if (user && user.role) {
+            let dashboardUrl = 'farmer-dashboard-enhanced.html';
+            if (user.role === 'officer') {
+              dashboardUrl = 'officer-dashboard.html';
+            } else if (user.role === 'admin') {
+              dashboardUrl = 'admin-dashboard.html';
+            }
+            window.location.href = `${dashboardUrl}?tab=image-analysis`;
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      }
+    })();
+  </script>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="container" style="display: flex; justify-content: space-between; align-items: center;">
+      <a href="../index.html" style="text-decoration: none; display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+        <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #2ecc71 0%, #3498db 100%); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 1.5rem;">
+          <i class="fas fa-leaf"></i>
+        </div>
+        <span style="font-weight: 700; color: #333; font-size: 1.1rem;">Farmer Query</span>
+      </a>
+      <div style="display: flex; gap: 1rem;">
+        <a href="../index.html" class="back-btn">
+          <i class="fas fa-arrow-left"></i> Back to Home
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Preview Header -->
+  <section class="preview-header">
+    <div class="container">
+      <h1><i class="fas fa-image"></i> Image Analysis</h1>
+      <p>Upload crop photos - Get instant disease detection and AI-powered recommendations</p>
+    </div>
+  </section>
+
+  <!-- Main Content -->
+  <div class="container">
+    <!-- Demo Section -->
+    <div class="demo-section">
+      <h2 style="text-align: center; color: #333; margin-bottom: 2rem;">How Image Analysis Works</h2>
+      
+      <!-- Demo 1 -->
+      <div class="demo-item">
+        <div class="demo-visual">
+          <div style="font-size: 4rem; color: #3498db; margin-bottom: 1rem;">
+            <i class="fas fa-camera"></i>
+          </div>
+          <p style="color: #666;">Take or upload a photo of affected crop</p>
+        </div>
+        <div class="demo-text">
+          <h3>1. Capture Your Problem</h3>
+          <p>Use your phone or computer to capture a clear photo of the diseased crop, affected leaves, or problem area in your field.</p>
+          <ul class="features-list">
+            <li><i class="fas fa-check-circle"></i> Works with any smartphone camera</li>
+            <li><i class="fas fa-check-circle"></i> Supports multiple image formats</li>
+            <li><i class="fas fa-check-circle"></i> Best with clear, natural lighting</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Demo 2 -->
+      <div class="demo-item reverse">
+        <div class="demo-visual">
+          <div style="font-size: 4rem; color: #3498db; margin-bottom: 1rem;">
+            <i class="fas fa-brain"></i>
+          </div>
+          <p style="color: #666;">AI analyzes the image for diseases</p>
+        </div>
+        <div class="demo-text">
+          <h3>2. AI Disease Detection</h3>
+          <p>Our advanced computer vision AI analyzes the image instantly to identify crop diseases, pest damage, and nutrient deficiencies.</p>
+          <ul class="features-list">
+            <li><i class="fas fa-check-circle"></i> Detects 100+ crop diseases</li>
+            <li><i class="fas fa-check-circle"></i> Identifies pest damage</li>
+            <li><i class="fas fa-check-circle"></i> Recognizes nutrient deficiencies</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Demo 3 -->
+      <div class="demo-item">
+        <div class="demo-visual">
+          <div style="font-size: 4rem; color: #3498db; margin-bottom: 1rem;">
+            <i class="fas fa-prescription-bottle-medical"></i>
+          </div>
+          <p style="color: #666;">Get treatment recommendations</p>
+        </div>
+        <div class="demo-text">
+          <h3>3. Get Recommendations</h3>
+          <p>Receive detailed treatment plans including fertilizers, pesticides, irrigation adjustments, and preventive measures.</p>
+          <ul class="features-list">
+            <li><i class="fas fa-check-circle"></i> Specific treatment suggestions</li>
+            <li><i class="fas fa-check-circle"></i> Product recommendations</li>
+            <li><i class="fas fa-check-circle"></i> Prevention tips for future</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Features List -->
+      <div style="margin-top: 3rem; padding: 2rem; background: linear-gradient(135deg, rgba(52, 152, 219, 0.1) 0%, rgba(41, 128, 185, 0.1) 100%); border-radius: 8px;">
+        <h3 style="color: #3498db; margin-bottom: 1rem;">Key Features</h3>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+          <div>
+            <p><strong><i class="fas fa-check" style="color: #3498db;"></i> Instant Analysis</strong></p>
+            <p style="color: #666; margin-left: 1.5rem;">Get results in seconds, not days</p>
+          </div>
+          <div>
+            <p><strong><i class="fas fa-check" style="color: #3498db;"></i> High Accuracy</strong></p>
+            <p style="color: #666; margin-left: 1.5rem;">90%+ accuracy on disease detection</p>
+          </div>
+          <div>
+            <p><strong><i class="fas fa-check" style="color: #3498db;"></i> OCR Text Recognition</strong></p>
+            <p style="color: #666; margin-left: 1.5rem;">Reads text from pesticide bottles</p>
+          </div>
+          <div>
+            <p><strong><i class="fas fa-check" style="color: #3498db;"></i> Expert Verified</strong></p>
+            <p style="color: #666; margin-left: 1.5rem;">Results reviewed by agronomists</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Example Analysis -->
+    <div class="demo-section">
+      <h3 style="color: #3498db; margin-bottom: 1rem;"><i class="fas fa-images"></i> Example Analysis</h3>
+      <div class="example-grid">
+        <div class="example-card">
+          <div class="example-image">
+            <i class="fas fa-leaf"></i>
+          </div>
+          <div class="example-info">
+            <h4>Tomato Leaf Spot</h4>
+            <p>Early Blight disease detected</p>
+          </div>
+        </div>
+        <div class="example-card">
+          <div class="example-image">
+            <i class="fas fa-bug"></i>
+          </div>
+          <div class="example-info">
+            <h4>Pest Infestation</h4>
+            <p>Aphid damage identified</p>
+          </div>
+        </div>
+        <div class="example-card">
+          <div class="example-image">
+            <i class="fas fa-droplet"></i>
+          </div>
+          <div class="example-info">
+            <h4>Nutrient Deficiency</h4>
+            <p>Iron deficiency chlorosis</p>
+          </div>
+        </div>
+        <div class="example-card">
+          <div class="example-image">
+            <i class="fas fa-certificate"></i>
+          </div>
+          <div class="example-info">
+            <h4>Healthy Crop</h4>
+            <p>No issues detected</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sample Analysis Result -->
+      <div style="margin-top: 2rem; padding: 1.5rem; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #3498db;">
+        <h4 style="color: #3498db; margin-top: 0;">Sample Analysis Report</h4>
+        <div class="analysis-result">
+          <strong>Disease Detected:</strong> Powdery Mildew on Wheat<br>
+          <strong>Confidence:</strong> 94%<br>
+          <strong>Affected Area:</strong> ~30% of leaf surface<br>
+        </div>
+        <div class="analysis-result">
+          <strong>Recommended Treatment:</strong><br>
+          1. Spray sulfur powder or fungicide (e.g., Tridemorph)<br>
+          2. Ensure proper air circulation<br>
+          3. Avoid overhead irrigation<br>
+          4. Repeat treatment every 10-14 days
+        </div>
+        <div class="analysis-result">
+          <strong>Best Time to Treat:</strong> Early morning or late evening<br>
+          <strong>Prevention for Next Season:</strong> Use resistant varieties, proper field sanitation
+        </div>
+      </div>
+    </div>
+
+    <!-- How to Upload -->
+    <div class="demo-section">
+      <h3 style="color: #3498db; margin-bottom: 1rem;"><i class="fas fa-file-image"></i> Tips for Best Results</h3>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+        <div style="padding: 1rem; background: linear-gradient(135deg, rgba(52, 152, 219, 0.1) 0%, rgba(41, 128, 185, 0.1) 100%); border-radius: 8px;">
+          <h4 style="color: #3498db; margin-top: 0;"><i class="fas fa-check-circle"></i> DO's</h4>
+          <ul style="margin: 0; padding-left: 1.5rem; color: #666;">
+            <li>Use clear, natural lighting</li>
+            <li>Get close-up shots of affected area</li>
+            <li>Include healthy parts for comparison</li>
+            <li>Take multiple angles if possible</li>
+            <li>Ensure the entire leaf is visible</li>
+          </ul>
+        </div>
+        <div style="padding: 1rem; background: linear-gradient(135deg, rgba(231, 76, 60, 0.1) 0%, rgba(192, 57, 43, 0.1) 100%); border-radius: 8px;">
+          <h4 style="color: #e74c3c; margin-top: 0;"><i class="fas fa-times-circle"></i> DON'Ts</h4>
+          <ul style="margin: 0; padding-left: 1.5rem; color: #666;">
+            <li>Don't use flash photography</li>
+            <li>Don't take photos in shadows</li>
+            <li>Don't crop important parts</li>
+            <li>Don't use heavily filtered images</li>
+            <li>Don't mix different plants in one image</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Login Section -->
+    <div class="login-section">
+      <h2><i class="fas fa-lock"></i> Start Diagnosing Your Crops Now!</h2>
+      <p style="margin-bottom: 1.5rem;">Login or register to upload your crop photos and get instant AI-powered disease detection and treatment recommendations.</p>
+      <a href="login-enhanced.html" class="login-btn">
+        <i class="fas fa-sign-in-alt"></i> Login Now
+      </a>
+      <p style="margin-top: 1rem;">Don't have an account? <a href="register-enhanced.html" style="color: white; text-decoration: underline;">Register here</a></p>
+    </div>
+
+    <!-- Footer -->
+    <div style="text-align: center; padding: 2rem 0; border-top: 1px solid #eee; margin-top: 2rem;">
+      <a href="../index.html" class="back-btn">
+        <i class="fas fa-arrow-left"></i> Back to Home
+      </a>
+    </div>
+  </div>
+</body>
+</html>

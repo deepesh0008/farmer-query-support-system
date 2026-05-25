@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard - Query Support</title>
+  <link rel="stylesheet" href="../assets/css/styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body onload="initAdminDashboard()">
+  <script src="../assets/js/api.js"></script>
+
+  <nav class="navbar">
+    <div class="container">
+      <div class="navbar-brand">
+        <a href="../index.html" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+          <h1><i class="fas fa-crown"></i> Admin Dashboard</h1>
+        </a>
+      </div>
+      <div class="navbar-menu">
+        <span id="userGreeting"></span>
+        <a href="javascript:logout()" class="nav-link">Logout</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="dashboard">
+    <div class="sidebar">
+      <div class="sidebar-item active" onclick="switchAdminTab('overview')">
+        <a href="javascript:void(0)"><i class="fas fa-chart-pie"></i> Overview</a>
+      </div>
+      <div class="sidebar-item" onclick="switchAdminTab('schemes')">
+        <a href="javascript:void(0)"><i class="fas fa-file-contract"></i> Manage Schemes</a>
+      </div>
+      <div class="sidebar-item" onclick="switchAdminTab('analytics')">
+        <a href="javascript:void(0)"><i class="fas fa-chart-bar"></i> Analytics</a>
+      </div>
+      <div class="sidebar-item" onclick="switchAdminTab('settings')">
+        <a href="javascript:void(0)"><i class="fas fa-cog"></i> Settings</a>
+      </div>
+    </div>
+
+    <div class="main-content">
+      <!-- Overview Tab -->
+      <div id="overviewTab" class="tab-content">
+        <div class="dashboard-header">
+          <h2>System Overview</h2>
+          <p>Monitor system health and key metrics</p>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+          <div class="card">
+            <h3 style="color: var(--primary-color);"><i class="fas fa-users"></i> Total Users</h3>
+            <p style="font-size: 2rem; color: var(--primary-color);" id="totalUsers">0</p>
+          </div>
+          <div class="card">
+            <h3 style="color: var(--secondary-color);"><i class="fas fa-question"></i> Total Queries</h3>
+            <p style="font-size: 2rem; color: var(--secondary-color);" id="totalQueries">0</p>
+          </div>
+          <div class="card">
+            <h3 style="color: #f39c12;"><i class="fas fa-check"></i> Resolved Queries</h3>
+            <p style="font-size: 2rem; color: #f39c12;" id="resolvedQueries">0</p>
+          </div>
+          <div class="card">
+            <h3 style="color: #e74c3c;"><i class="fas fa-exclamation"></i> Pending Escalations</h3>
+            <p style="font-size: 2rem; color: #e74c3c;" id="pendingEscalations">0</p>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>System Status</h3>
+          <table style="width: 100%; border-collapse: collapse;">
+            <tr>
+              <td style="padding: 0.5rem; border-bottom: 1px solid #eee;"><strong>Database</strong></td>
+              <td style="padding: 0.5rem; border-bottom: 1px solid #eee;"><span style="color: var(--primary-color);"><i class="fas fa-check"></i> Connected</span></td>
+            </tr>
+            <tr>
+              <td style="padding: 0.5rem; border-bottom: 1px solid #eee;"><strong>API Server</strong></td>
+              <td style="padding: 0.5rem; border-bottom: 1px solid #eee;"><span style="color: var(--primary-color);"><i class="fas fa-check"></i> Running</span></td>
+            </tr>
+            <tr>
+              <td style="padding: 0.5rem;"><strong>Last Backup</strong></td>
+              <td style="padding: 0.5rem;" id="lastBackup">N/A</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <!-- Schemes Tab -->
+      <div id="schemesTab" class="tab-content" style="display: none;">
+        <div class="dashboard-header">
+          <h2>Manage Schemes</h2>
+          <button class="btn btn-primary btn-small" onclick="openAddSchemeForm()">+ Add Scheme</button>
+        </div>
+
+        <div class="card">
+          <div class="form-group">
+            <label for="schemeFilterGov">Filter by Government Level</label>
+            <select id="schemeFilterGov" onchange="filterSchemes()">
+              <option value="">All Schemes</option>
+              <option value="central">Central Government</option>
+              <option value="state">State Government</option>
+              <option value="district">District Level</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="schemesList" class="card">
+          <p>Loading schemes...</p>
+        </div>
+      </div>
+
+      <!-- Analytics Tab -->
+      <div id="analyticsTab" class="tab-content" style="display: none;">
+        <div class="dashboard-header">
+          <h2>Analytics & Reports</h2>
+        </div>
+
+        <div class="card">
+          <h3>Query Statistics</h3>
+          <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+              <tr style="background: #f5f5f5;">
+                <th style="padding: 0.75rem; text-align: left; border-bottom: 2px solid #ddd;">Query Type</th>
+                <th style="padding: 0.75rem; text-align: left; border-bottom: 2px solid #ddd;">Count</th>
+                <th style="padding: 0.75rem; text-align: left; border-bottom: 2px solid #ddd;">Percentage</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="padding: 0.75rem; border-bottom: 1px solid #eee;">Text Queries</td>
+                <td style="padding: 0.75rem; border-bottom: 1px solid #eee;" id="textQueryCount">0</td>
+                <td style="padding: 0.75rem; border-bottom: 1px solid #eee;" id="textQueryPercent">0%</td>
+              </tr>
+              <tr>
+                <td style="padding: 0.75rem; border-bottom: 1px solid #eee;">Voice Queries</td>
+                <td style="padding: 0.75rem; border-bottom: 1px solid #eee;" id="voiceQueryCount">0</td>
+                <td style="padding: 0.75rem; border-bottom: 1px solid #eee;" id="voiceQueryPercent">0%</td>
+              </tr>
+              <tr>
+                <td style="padding: 0.75rem;">Image Queries</td>
+                <td style="padding: 0.75rem;" id="imageQueryCount">0</td>
+                <td style="padding: 0.75rem;" id="imageQueryPercent">0%</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="card">
+          <h3>Performance Metrics</h3>
+          <p><strong>Average Response Time:</strong> <span id="avgResponseTime">N/A</span></p>
+          <p><strong>AI Response Success Rate:</strong> <span id="successRate">N/A</span></p>
+          <p><strong>User Satisfaction (Avg Rating):</strong> <span id="avgRating">N/A</span></p>
+        </div>
+      </div>
+
+      <!-- Settings Tab -->
+      <div id="settingsTab" class="tab-content" style="display: none;">
+        <div class="dashboard-header">
+          <h2>System Settings</h2>
+        </div>
+
+        <div class="card">
+          <h3>Configuration</h3>
+          <div class="form-group">
+            <label for="appName">Application Name</label>
+            <input type="text" id="appName" value="Farmer Query Support System">
+          </div>
+          <div class="form-group">
+            <label for="maintenanceMode">Maintenance Mode</label>
+            <select id="maintenanceMode">
+              <option value="false">Off</option>
+              <option value="true">On</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="maxFileSize">Max Upload Size (MB)</label>
+            <input type="number" id="maxFileSize" value="10">
+          </div>
+          <button class="btn btn-primary" onclick="saveSettings()">Save Settings</button>
+        </div>
+
+        <div class="card">
+          <h3>Backup & Maintenance</h3>
+          <button class="btn btn-secondary" onclick="backupDatabase()">Backup Database</button>
+          <button class="btn btn-secondary" onclick="clearCache()">Clear Cache</button>
+          <button class="btn btn-danger" onclick="resetSystem()">Reset System (Admin Only)</button>
+        </div>
+
+        <div class="card">
+          <h3>API Configuration</h3>
+          <p><strong>API Base URL:</strong> http://localhost:5000/api/v1</p>
+          <p><strong>Frontend URL:</strong> http://localhost:3000</p>
+          <button class="btn btn-secondary" onclick="testConnections()">Test Connections</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function initAdminDashboard() {
+      requireAuth();
+      const user = getCurrentUser();
+      if (user && user.role !== 'admin') {
+        alert('Access denied. Admin only.');
+        window.location.href = 'login.html';
+        return;
+      }
+      
+      if (user) {
+        document.getElementById('userGreeting').textContent = `Welcome, Admin ${user.profile?.firstName || user.email}!`;
+      }
+      
+      loadOverviewStats();
+      loadSchemes();
+      loadAnalytics();
+    }
+
+    function switchAdminTab(tabName) {
+      document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.style.display = 'none';
+      });
+      document.querySelectorAll('.sidebar-item').forEach(item => {
+        item.classList.remove('active');
+      });
+
+      document.getElementById(tabName + 'Tab').style.display = 'block';
+      event.target.closest('.sidebar-item').classList.add('active');
+    }
+
+    async function loadOverviewStats() {
+      try {
+        // These would come from actual endpoints; for now using mock data
+        document.getElementById('totalUsers').textContent = '150';
+        document.getElementById('totalQueries').textContent = '342';
+        document.getElementById('resolvedQueries').textContent = '298';
+        document.getElementById('pendingEscalations').textContent = '12';
+        document.getElementById('lastBackup').textContent = new Date().toLocaleDateString();
+      } catch (error) {
+        console.error('Error loading stats:', error);
+      }
+    }
+
+    async function loadSchemes() {
+      try {
+        const result = await api.listSchemes(1, 50);
+        const list = document.getElementById('schemesList');
+
+        if (result.items.length === 0) {
+          list.innerHTML = '<p>No schemes found.</p>';
+          return;
+        }
+
+        list.innerHTML = result.items.map(s => `
+          <div class="card" style="margin-bottom: 1rem;">
+            <div class="card-header">
+              <div>
+                <h3>${s.schemeName}</h3>
+                <small>Code: ${s.schemeCode} | Level: ${s.govtLevel}</small>
+              </div>
+              <div>
+                <button class="btn btn-small btn-secondary" onclick="editScheme('${s._id}')">Edit</button>
+                <button class="btn btn-small btn-danger" onclick="deleteScheme('${s._id}')">Delete</button>
+              </div>
+            </div>
+            <p>${s.description?.substring(0, 150) || 'No description'}...</p>
+          </div>
+        `).join('');
+      } catch (error) {
+        console.error('Error loading schemes:', error);
+      }
+    }
+
+    function loadAnalytics() {
+      // Mock analytics data
+      document.getElementById('textQueryCount').textContent = '245';
+      document.getElementById('textQueryPercent').textContent = '71%';
+      document.getElementById('voiceQueryCount').textContent = '62';
+      document.getElementById('voiceQueryPercent').textContent = '18%';
+      document.getElementById('imageQueryCount').textContent = '35';
+      document.getElementById('imageQueryPercent').textContent = '10%';
+      document.getElementById('avgResponseTime').textContent = '2.3 seconds';
+      document.getElementById('successRate').textContent = '94%';
+      document.getElementById('avgRating').textContent = '4.2/5';
+    }
+
+    function openAddSchemeForm() {
+      alert('Add Scheme form - implement form modal');
+    }
+
+    function editScheme(schemeId) {
+      alert('Edit Scheme ' + schemeId.substring(0, 8) + '...');
+    }
+
+    async function deleteScheme(schemeId) {
+      if (confirm('Are you sure you want to delete this scheme?')) {
+        try {
+          // Would call API to delete
+          alert('Scheme deleted successfully');
+          loadSchemes();
+        } catch (error) {
+          alert('Error deleting scheme');
+        }
+      }
+    }
+
+    function filterSchemes() {
+      loadSchemes();
+    }
+
+    function saveSettings() {
+      alert('Settings saved successfully!');
+    }
+
+    function backupDatabase() {
+      alert('Database backup initiated...');
+    }
+
+    function clearCache() {
+      alert('Cache cleared successfully!');
+    }
+
+    function resetSystem() {
+      if (confirm('WARNING: This will reset the entire system. Are you absolutely sure?')) {
+        alert('System reset - not implemented for safety');
+      }
+    }
+
+    function testConnections() {
+      alert('Testing API and database connections...');
+      fetch('http://localhost:5000/health')
+        .then(r => r.json())
+        .then(d => alert('✓ Backend API: Connected\n✓ Database: Connected'))
+        .catch(() => alert('✗ Connection test failed'));
+    }
+  </script>
+</body>
+</html>

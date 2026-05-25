@@ -1,0 +1,1115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Farmer Dashboard - Query Support System</title>
+  <link rel="stylesheet" href="../assets/css/enhanced-styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="container">
+      <div class="navbar-brand">
+        <a href="../index.html" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+          <h1><i class="fas fa-leaf"></i> Farmer Query Support</h1>
+        </a>
+      </div>
+      <div class="navbar-menu">
+        <span id="userGreeting">👋 Welcome!</span>
+        <a href="javascript:logout()" class="nav-link">
+          <i class="fas fa-sign-out-alt"></i> Logout
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Dashboard -->
+  <div class="dashboard">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="sidebar-item active" data-tab="submit" onclick="app?.switchTab('submit')">
+        <a href="javascript:void(0)">
+          <i class="fas fa-plus-circle"></i> Submit Query
+        </a>
+      </div>
+      <div class="sidebar-item" data-tab="queries" onclick="app?.switchTab('queries')">
+        <a href="javascript:void(0)">
+          <i class="fas fa-list"></i> My Queries
+        </a>
+      </div>
+      <div class="sidebar-item" data-tab="weather" onclick="app?.switchTab('weather')">
+        <a href="javascript:void(0)">
+          <i class="fas fa-cloud-sun"></i> Weather
+        </a>
+      </div>
+      <div class="sidebar-item" data-tab="market" onclick="app?.switchTab('market')">
+        <a href="javascript:void(0)">
+          <i class="fas fa-chart-bar"></i> Market Prices
+        </a>
+      </div>
+      <div class="sidebar-item" data-tab="schemes" onclick="app?.switchTab('schemes')">
+        <a href="javascript:void(0)">
+          <i class="fas fa-file-contract"></i> Government Schemes
+        </a>
+      </div>
+      <div class="sidebar-item" data-tab="image-analysis" onclick="app?.switchTab('image-analysis')">
+        <a href="javascript:void(0)">
+          <i class="fas fa-image"></i> Image Analysis
+        </a>
+      </div>
+      <div class="sidebar-item" data-tab="voice-queries" onclick="app?.switchTab('voice-queries')">
+        <a href="javascript:void(0)">
+          <i class="fas fa-microphone"></i> Voice Queries
+        </a>
+      </div>
+      <div class="sidebar-item" data-tab="expert-support" onclick="app?.switchTab('expert-support')">
+        <a href="javascript:void(0)">
+          <i class="fas fa-comments"></i> Expert Support
+        </a>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <!-- Alert Messages -->
+      <div id="alertMessage" class="alert" style="display: none;"></div>
+
+      <!-- ===== SUBMIT QUERY TAB ===== -->
+      <div id="submitTab" class="tab-content">
+        <div class="dashboard-header">
+          <div>
+            <h2>📝 Submit a Query</h2>
+            <p>Get expert advice for your agricultural questions</p>
+          </div>
+        </div>
+
+        <div class="card">
+          <form id="queryForm">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+              <!-- Query Type -->
+              <div class="form-group">
+                <label for="queryType">
+                  <i class="fas fa-question-circle"></i> Query Type *
+                </label>
+                <select id="queryType" name="queryType" required>
+                  <option value="">Select query type...</option>
+                  <option value="text">💬 Text Query</option>
+                  <option value="voice">🎤 Voice Query</option>
+                  <option value="image">🖼️ Image/Photo</option>
+                </select>
+              </div>
+
+              <!-- Crop Type -->
+              <div class="form-group">
+                <label for="cropType">
+                  <i class="fas fa-leaf"></i> Crop Type *
+                </label>
+                <input type="text" id="cropType" name="cropType" placeholder="e.g., Rice, Wheat, Maize" required>
+                <small>Start typing to see suggestions</small>
+              </div>
+            </div>
+
+            <!-- Query Description -->
+            <div class="form-group">
+              <label for="query">
+                <i class="fas fa-pen"></i> Your Question/Description *
+              </label>
+              <textarea id="query" name="query" placeholder="Describe your farming issue in detail..." 
+                        rows="5" required></textarea>
+              <small id="queryCharCount" style="color: #3498db;">0/500 characters</small>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+              <!-- Season -->
+              <div class="form-group">
+                <label for="season">
+                  <i class="fas fa-calendar-alt"></i> Season
+                </label>
+                <select id="season" name="season">
+                  <option value="">Select season...</option>
+                  <option value="kharif">🌾 Kharif (Monsoon)</option>
+                  <option value="rabi">🌽 Rabi (Winter)</option>
+                  <option value="summer">☀️ Summer</option>
+                  <option value="perennial">🔄 Perennial</option>
+                </select>
+              </div>
+
+              <!-- Symptoms Duration -->
+              <div class="form-group">
+                <label for="symptomsDuration">
+                  <i class="fas fa-history"></i> Symptoms Duration
+                </label>
+                <select id="symptomsDuration" name="symptomsDuration">
+                  <option value="">Select duration...</option>
+                  <option value="1-3 days">1-3 days</option>
+                  <option value="1-2 weeks">1-2 weeks</option>
+                  <option value="2-4 weeks">2-4 weeks</option>
+                  <option value="1+ months">1+ months</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Image Upload -->
+            <div class="form-group">
+              <label for="image">
+                <i class="fas fa-camera"></i> Attach Photo (Optional)
+              </label>
+              <input type="file" id="image" name="image" accept="image/*" />
+              <small>📸 Upload a clear photo of affected crop for better diagnosis</small>
+            </div>
+
+            <div style="display: flex; gap: 1rem;">
+              <button type="submit" class="btn btn-primary">
+                <i class="fas fa-paper-plane"></i> Submit Query
+              </button>
+              <button type="reset" class="btn btn-secondary">
+                <i class="fas fa-undo"></i> Clear
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Tips Section -->
+        <div class="card">
+          <h3>💡 Tips for Better Responses</h3>
+          <ul style="margin-left: 1.5rem; line-height: 2;">
+            <li>Provide as much detail as possible about the issue</li>
+            <li>Mention the crop variety if you know it</li>
+            <li>Describe symptoms (color, shape, pattern)</li>
+            <li>Upload clear, close-up photos if available</li>
+            <li>Mention recent weather changes</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- ===== MY QUERIES TAB ===== -->
+      <div id="queriesTab" class="tab-content" style="display: none;">
+        <div class="dashboard-header">
+          <div>
+            <h2>📋 My Queries</h2>
+            <p>Track and manage all your submitted queries</p>
+          </div>
+          <button class="btn btn-secondary btn-small" onclick="app?.loadFarmerQueries()">
+            <i class="fas fa-sync"></i> Refresh
+          </button>
+        </div>
+
+        <!-- Filter Section -->
+        <div class="card" style="margin-bottom: 1rem;">
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+            <div class="form-group" style="margin: 0;">
+              <label>Filter by Status</label>
+              <select data-search id="statusFilter">
+                <option value="">All Queries</option>
+                <option value="pending">⏳ Pending</option>
+                <option value="answered">✅ Answered</option>
+                <option value="escalated">⬆️ Escalated</option>
+                <option value="resolved">🎉 Resolved</option>
+              </select>
+            </div>
+            <div class="form-group" style="margin: 0;">
+              <label>Search Queries</label>
+              <input type="text" data-search placeholder="Search by crop, keywords..." />
+            </div>
+          </div>
+        </div>
+
+        <!-- Queries List -->
+        <div id="queriesList" class="card">
+          <div class="flex-center">
+            <div class="spinner"></div>
+            <span style="margin-left: 1rem;">Loading your queries...</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== WEATHER TAB ===== -->
+      <div id="weatherTab" class="tab-content" style="display: none;">
+        <div class="dashboard-header">
+          <div>
+            <h2>🌤️ Weather Information</h2>
+            <p>Current weather and forecast for your area</p>
+          </div>
+        </div>
+
+        <!-- Weather Search -->
+        <div class="card">
+          <div style="display: grid; grid-template-columns: 1fr auto; gap: 1rem; align-items: end;">
+            <div class="form-group" style="margin: 0;">
+              <label for="weatherCity">
+                <i class="fas fa-map-marker-alt"></i> Search by City
+              </label>
+              <input type="text" id="weatherCity" placeholder="Enter city name..." />
+            </div>
+            <button class="btn btn-primary" onclick="app?.handleWeatherSearch()">
+              <i class="fas fa-search"></i> Search
+            </button>
+          </div>
+        </div>
+
+        <!-- Weather Details -->
+        <div id="weatherInfo" style="display: none;" class="card">
+          <h3>Current Weather</h3>
+          <div id="weatherDetails" class="weather-grid"></div>
+        </div>
+
+        <!-- Forecast -->
+        <div id="forecastInfo" style="display: none;" class="card">
+          <h3>5-Day Forecast</h3>
+          <div id="forecastDetails" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem;"></div>
+        </div>
+      </div>
+
+      <!-- ===== MARKET PRICES TAB ===== -->
+      <div id="marketTab" class="tab-content" style="display: none;">
+        <div class="dashboard-header">
+          <div>
+            <h2>📊 Market Prices</h2>
+            <p>Real-time agricultural commodity prices</p>
+          </div>
+        </div>
+
+        <!-- Market Search -->
+        <div class="card">
+          <div style="display: grid; grid-template-columns: 1fr 1fr auto; gap: 1rem; align-items: end;">
+            <div class="form-group" style="margin: 0;">
+              <label for="marketCrop">
+                <i class="fas fa-leaf"></i> Crop Name
+              </label>
+              <input type="text" id="marketCrop" placeholder="e.g., Rice, Wheat..." />
+            </div>
+            <div class="form-group" style="margin: 0;">
+              <label for="marketState">
+                <i class="fas fa-map"></i> State
+              </label>
+              <select id="marketState" style="width: 100%; padding: 0.8rem; border: 1px solid var(--border); border-radius: 8px; font-size: 1rem; background-color: white;">
+                <option value="">All States (Optional)</option>
+                <option value="Delhi">Delhi</option>
+                <option value="West Bengal">West Bengal</option>
+                <option value="Maharashtra">Maharashtra</option>
+                <option value="Uttar Pradesh">Uttar Pradesh</option>
+                <option value="Rajasthan">Rajasthan</option>
+                <option value="Punjab">Punjab</option>
+                <option value="Haryana">Haryana</option>
+                <option value="Gujarat">Gujarat</option>
+                <option value="Karnataka">Karnataka</option>
+              </select>
+            </div>
+            <button class="btn btn-primary" onclick="app?.handleMarketPrices()">
+              <i class="fas fa-search"></i> Search
+            </button>
+          </div>
+        </div>
+
+        <!-- Market Results -->
+        <div id="marketInfo" style="display: none;" class="card">
+          <h3>Market Prices</h3>
+          <div id="pricesTable" style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse;">
+              <thead style="background: var(--light);">
+                <tr>
+                  <th style="padding: 1rem; text-align: left; border-bottom: 2px solid var(--border);">Crop</th>
+                  <th style="padding: 1rem; text-align: left; border-bottom: 2px solid var(--border);">Market</th>
+                  <th style="padding: 1rem; text-align: right; border-bottom: 2px solid var(--border);">Price</th>
+                  <th style="padding: 1rem; text-align: left; border-bottom: 2px solid var(--border);">Date</th>
+                </tr>
+              </thead>
+              <tbody id="pricesList"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== SCHEMES TAB ===== -->
+      <div id="schemesTab" class="tab-content" style="display: none;">
+        <div class="dashboard-header">
+          <div>
+            <h2>📄 Government Schemes</h2>
+            <p>Discover agricultural schemes and benefits</p>
+          </div>
+        </div>
+
+        <!-- Scheme Search -->
+        <div class="card">
+          <div style="display: grid; grid-template-columns: 1fr auto; gap: 1rem; align-items: end;">
+            <div class="form-group" style="margin: 0;">
+              <label for="schemeSearch">
+                <i class="fas fa-search"></i> Search Schemes
+              </label>
+              <input type="text" id="schemeSearch" placeholder="Search by scheme name..." />
+            </div>
+            <button class="btn btn-primary" onclick="app?.handleSearchSchemes()">
+              <i class="fas fa-filter"></i> Search
+            </button>
+          </div>
+        </div>
+
+        <!-- Featured Schemes -->
+        <div class="card">
+          <h3>Featured Schemes</h3>
+          <div id="schemesList" style="display: grid; gap: 1rem;">
+            <div class="flex-center" style="padding: 2rem;">
+              <div class="spinner"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== IMAGE ANALYSIS TAB ===== -->
+      <div id="imageAnalysisTab" class="tab-content" style="display: none;">
+        <div class="dashboard-header">
+          <div>
+            <h2>📸 Image Analysis</h2>
+            <p>AI-powered disease detection for your crops</p>
+          </div>
+        </div>
+
+        <!-- How It Works Steps -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+          <div style="background: linear-gradient(135deg, #3498db 0%, #2980b9 100%); color: white; padding: 1.5rem; border-radius: 8px; text-align: center;">
+            <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">📷</div>
+            <h4 style="margin: 0.5rem 0;">Step 1: Capture</h4>
+            <p style="font-size: 0.9rem; margin: 0;">Take or upload a clear photo of your affected crop</p>
+          </div>
+          <div style="background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%); color: white; padding: 1.5rem; border-radius: 8px; text-align: center;">
+            <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">🧠</div>
+            <h4 style="margin: 0.5rem 0;">Step 2: AI Analysis</h4>
+            <p style="font-size: 0.9rem; margin: 0;">Our AI detects diseases and identifies problems</p>
+          </div>
+          <div style="background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%); color: white; padding: 1.5rem; border-radius: 8px; text-align: center;">
+            <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">💊</div>
+            <h4 style="margin: 0.5rem 0;">Step 3: Treatment</h4>
+            <p style="font-size: 0.9rem; margin: 0;">Get instant recommendations and expert solutions</p>
+          </div>
+        </div>
+
+        <!-- Image Upload Section -->
+        <div class="card">
+          <h3>📷 Step 1: Capture Your Problem</h3>
+          <form id="imageAnalysisForm">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+              <div style="background: rgba(52, 152, 219, 0.1); padding: 2rem; border-radius: 8px; border: 2px dashed #3498db; text-align: center; cursor: pointer;" onclick="document.getElementById('cropPhotoInput').click()">
+                <div style="font-size: 3rem; margin-bottom: 0.5rem;">📤</div>
+                <h4 style="margin: 0.5rem 0; color: #3498db;">Click to Upload Photo</h4>
+                <p style="font-size: 0.85rem; color: #7f8c8d; margin: 0;">JPG, PNG, WebP (Max 5MB)</p>
+                <input type="file" id="cropPhotoInput" accept="image/*" style="display: none;" />
+              </div>
+              <div id="imagePreviewContainer" style="background: #f8f9fa; padding: 1rem; border-radius: 8px; display: none; text-align: center;">
+                <p style="color: #7f8c8d; font-weight: 600; margin-bottom: 0.5rem;">Preview:</p>
+                <img id="previewImageThumb" style="max-width: 100%; max-height: 150px; border-radius: 4px;" />
+              </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+              <div class="form-group">
+                <label for="cropTypeImage">
+                  <i class="fas fa-leaf"></i> Crop Type *
+                </label>
+                <input type="text" id="cropTypeImage" placeholder="e.g., Tomato, Wheat, Rice" required />
+              </div>
+              <div class="form-group">
+                <label for="affectedArea">
+                  <i class="fas fa-percentage"></i> Affected Area (%)
+                </label>
+                <input type="number" id="affectedArea" min="1" max="100" placeholder="50" />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="imageDescription">
+                <i class="fas fa-pen"></i> What do you observe? (Optional)
+              </label>
+              <textarea id="imageDescription" placeholder="Describe symptoms: yellowing, spots, wilting..." rows="2"></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width: 100%; padding: 1rem; font-size: 1.05rem;">
+              <i class="fas fa-brain"></i> Analyze Photo Now
+            </button>
+          </form>
+        </div>
+
+        <!-- Analysis Results -->
+        <div id="analysisResults" style="display: none;" class="card">
+          <h3>🧠 Step 2: AI Detection Results</h3>
+          <div id="analysisContent"></div>
+        </div>
+
+        <!-- Treatment Recommendations -->
+        <div id="treatmentResults" style="display: none;" class="card">
+          <h3>💊 Step 3: Treatment & Solutions</h3>
+          <div id="treatmentContent"></div>
+          <button class="btn btn-secondary" style="margin-top: 1rem;" onclick="document.getElementById('imageAnalysisForm').reset(); document.getElementById('analysisResults').style.display='none'; document.getElementById('treatmentResults').style.display='none';">
+            <i class="fas fa-sync"></i> Analyze Another Photo
+          </button>
+        </div>
+
+        <!-- Sample Analysis Examples -->
+        <div class="card">
+          <h3>📚 Sample Analysis Examples</h3>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 1rem;">
+            <div style="border: 1px solid var(--border); border-radius: 8px; padding: 1rem; text-align: center; background: rgba(52, 152, 219, 0.05);">
+              <div style="font-size: 2rem; margin-bottom: 0.5rem;">🍅</div>
+              <h4 style="color: #3498db;">Tomato Leaf Spot</h4>
+              <p style="font-size: 0.9rem; color: #7f8c8d;">Early Blight - Spotted leaves</p>
+              <button class="btn btn-small" onclick="alert('Upload a tomato leaf photo with brown/black spots to detect this disease')">Learn More</button>
+            </div>
+            <div style="border: 1px solid var(--border); border-radius: 8px; padding: 1rem; text-align: center; background: rgba(46, 204, 113, 0.05);">
+              <div style="font-size: 2rem; margin-bottom: 0.5rem;">🐛</div>
+              <h4 style="color: #2ecc71;">Pest Infestation</h4>
+              <p style="font-size: 0.9rem; color: #7f8c8d;">Insects on leaves/stems</p>
+              <button class="btn btn-small" onclick="alert('Show photos of insects on your crops for identification')">Learn More</button>
+            </div>
+            <div style="border: 1px solid var(--border); border-radius: 8px; padding: 1rem; text-align: center; background: rgba(243, 156, 18, 0.05);">
+              <div style="font-size: 2rem; margin-bottom: 0.5rem;">🌱</div>
+              <h4 style="color: #f39c12;">Nutrient Deficiency</h4>
+              <p style="font-size: 0.9rem; color: #7f8c8d;">Yellowing/pale leaves</p>
+              <button class="btn btn-small" onclick="alert('Upload photos showing yellowing or pale leaves for nutrient analysis')">Learn More</button>
+            </div>
+            <div style="border: 1px solid var(--border); border-radius: 8px; padding: 1rem; text-align: center; background: rgba(231, 76, 60, 0.05);">
+              <div style="font-size: 2rem; margin-bottom: 0.5rem;">🔥</div>
+              <h4 style="color: #e74c3c;">Crop Burn</h4>
+              <p style="font-size: 0.9rem; color: #7f8c8d;">Burnt/brown patches</p>
+              <button class="btn btn-small" onclick="alert('Show burnt or brown patches for analysis')">Learn More</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Photography Tips -->
+        <div class="card">
+          <h3>📸 Photography Tips for Best Results</h3>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div>
+              <h4 style="color: #2ecc71;">✓ Do's:</h4>
+              <ul style="margin-left: 1.5rem; line-height: 1.8;">
+                <li>Take clear, well-lit photos</li>
+                <li>Focus on the affected area</li>
+                <li>Include crop name in description</li>
+                <li>Capture multiple angles if possible</li>
+                <li>Use natural daylight</li>
+              </ul>
+            </div>
+            <div>
+              <h4 style="color: #e74c3c;">✗ Don'ts:</h4>
+              <ul style="margin-left: 1.5rem; line-height: 1.8;">
+                <li>Avoid blurry or dark photos</li>
+                <li>Don't crop out the problem area</li>
+                <li>Avoid shadows or backlighting</li>
+                <li>Don't take photos with flash</li>
+                <li>Avoid photos from too far away</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== VOICE QUERIES TAB ===== -->
+      <div id="voiceQueriesTab" class="tab-content" style="display: none;">
+        <div class="dashboard-header">
+          <div>
+            <h2>🎤 Voice Queries</h2>
+            <p>Ask your farming questions in your own language using voice</p>
+          </div>
+        </div>
+
+        <!-- Voice Recording Section -->
+        <div class="card">
+          <h3>🎙️ Record Your Question</h3>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div>
+              <div class="form-group">
+                <label for="voiceLanguage">
+                  <i class="fas fa-globe"></i> Language
+                </label>
+                <select id="voiceLanguage">
+                  <option value="en">🇬🇧 English</option>
+                  <option value="hi">🇮🇳 Hindi</option>
+                  <option value="pa">🇵🇰 Punjabi</option>
+                  <option value="gu">Gujarati</option>
+                  <option value="mr">Marathi</option>
+                  <option value="ta">Tamil</option>
+                  <option value="te">Telugu</option>
+                  <option value="bn">Bengali</option>
+                </select>
+              </div>
+            </div>
+            <div>
+              <div class="form-group">
+                <label for="voiceCategory">
+                  <i class="fas fa-tags"></i> Category
+                </label>
+                <select id="voiceCategory">
+                  <option value="disease">🦠 Disease/Pest</option>
+                  <option value="irrigation">💧 Irrigation</option>
+                  <option value="fertilizer">🌱 Fertilizer</option>
+                  <option value="weather">🌤️ Weather Impact</option>
+                  <option value="harvest">🌾 Harvest/Storage</option>
+                  <option value="general">❓ General Query</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div style="text-align: center; padding: 2rem; background: linear-gradient(135deg, rgba(46, 204, 113, 0.1), rgba(52, 152, 219, 0.1)); border-radius: 8px; margin: 1rem 0;">
+            <button id="recordButton" class="btn btn-primary btn-lg">
+              <i class="fas fa-circle" style="color: #e74c3c; animation: pulse 1s infinite;"></i> <span id="recordButtonText">🎙️ Start Recording</span>
+            </button>
+            <div id="recordingStatus" style="margin-top: 1rem; font-size: 0.9rem; color: #7f8c8d; display: none;">
+              Recording in progress... <span id="recordingTime">0:00</span>
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 1rem; justify-content: center;">
+            <button type="button" class="btn btn-secondary" onclick="document.getElementById('audioFileInput').click()">
+              <i class="fas fa-upload"></i> Upload Audio File
+            </button>
+            <input type="file" id="audioFileInput" accept="audio/*" style="display: none;" />
+            <button type="button" class="btn btn-secondary" onclick="toggleVoiceToText()">
+              <i class="fas fa-keyboard"></i> Type Instead
+            </button>
+          </div>
+        </div>
+
+        <!-- Voice Query Examples -->
+        <div class="card">
+          <h3>📝 Example Questions</h3>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+            <div style="border-left: 4px solid #2ecc71; padding: 1rem; background: rgba(46, 204, 113, 0.05); border-radius: 4px;">
+              <h4 style="color: #2ecc71; margin: 0;">🌾 In Hindi</h4>
+              <p style="margin: 0.5rem 0; font-style: italic; color: #7f8c8d;">"मेरी गेहूँ की फसल पर सफेद पाउडर दिख रहा है, क्या करूँ?"</p>
+              <small>(My wheat crop has white powder, what should I do?)</small>
+            </div>
+            <div style="border-left: 4px solid #3498db; padding: 1rem; background: rgba(52, 152, 219, 0.05); border-radius: 4px;">
+              <h4 style="color: #3498db; margin: 0;">🌾 In English</h4>
+              <p style="margin: 0.5rem 0; font-style: italic; color: #7f8c8d;">"How much water should I give to my rice field during monsoon?"</p>
+              <small>Get expert guidance on irrigation</small>
+            </div>
+            <div style="border-left: 4px solid #f39c12; padding: 1rem; background: rgba(243, 156, 18, 0.05); border-radius: 4px;">
+              <h4 style="color: #f39c12; margin: 0;">🌾 In Punjabi</h4>
+              <p style="margin: 0.5rem 0; font-style: italic; color: #7f8c8d;">"ਮੇਰੀ ਮੱਕੀ ਦੀ ਫਸਲ ਉੱਤੇ ਕੀਟ ਹਨ"</p>
+              <small>Ask about pest problems</small>
+            </div>
+            <div style="border-left: 4px solid #e74c3c; padding: 1rem; background: rgba(231, 76, 60, 0.05); border-radius: 4px;">
+              <h4 style="color: #e74c3c; margin: 0;">🌾 Expert Tips</h4>
+              <p style="margin: 0.5rem 0; font-style: italic; color: #7f8c8d;">"Best fertilizer for sugarcane?"</p>
+              <small>Get personalized recommendations</small>
+            </div>
+          </div>
+        </div>
+
+        <!-- Response Section -->
+        <div id="voiceResponseSection" style="display: none;" class="card">
+          <h3>🤖 AI Response</h3>
+          <div id="voiceResponse" style="padding: 1rem; background: rgba(52, 152, 219, 0.05); border-radius: 8px; border-left: 4px solid #3498db;"></div>
+          <button class="btn btn-primary" style="margin-top: 1rem;" onclick="alert('Escalate to officer')">
+            <i class="fas fa-arrow-up"></i> Escalate to Officer
+          </button>
+        </div>
+      </div>
+
+      <!-- ===== EXPERT SUPPORT TAB ===== -->
+      <div id="expertSupportTab" class="tab-content" style="display: none;">
+        <div class="dashboard-header">
+          <div>
+            <h2>💬 Expert Support</h2>
+            <p>Get personalized guidance from agricultural experts</p>
+          </div>
+        </div>
+
+        <!-- Expert Network -->
+        <div class="card">
+          <h3>👨‍🌾 Available Experts</h3>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+            <div style="border: 1px solid var(--border); border-radius: 8px; padding: 1rem; text-align: center;">
+              <div style="font-size: 3rem; margin-bottom: 0.5rem;">👨‍🌾</div>
+              <h4>Rajesh Kumar</h4>
+              <p style="color: #2ecc71; font-weight: 600;">Wheat & Rice Specialist</p>
+              <p style="font-size: 0.85rem; color: #7f8c8d;">15+ years experience</p>
+              <div style="margin: 0.5rem 0;">
+                <i class="fas fa-star" style="color: #f39c12;"></i>
+                <i class="fas fa-star" style="color: #f39c12;"></i>
+                <i class="fas fa-star" style="color: #f39c12;"></i>
+                <i class="fas fa-star" style="color: #f39c12;"></i>
+                <i class="fas fa-star-half-alt" style="color: #f39c12;"></i>
+                <span style="margin-left: 0.5rem;">4.8/5</span>
+              </div>
+              <button class="btn btn-primary btn-small" onclick="alert('Chat with Rajesh')" style="margin-top: 0.5rem; width: 100%;">
+                <i class="fas fa-comments"></i> Chat Now
+              </button>
+            </div>
+            <div style="border: 1px solid var(--border); border-radius: 8px; padding: 1rem; text-align: center;">
+              <div style="font-size: 3rem; margin-bottom: 0.5rem;">👩‍🌾</div>
+              <h4>Priya Singh</h4>
+              <p style="color: #3498db; font-weight: 600;">Vegetable & Horticulture</p>
+              <p style="font-size: 0.85rem; color: #7f8c8d;">12+ years experience</p>
+              <div style="margin: 0.5rem 0;">
+                <i class="fas fa-star" style="color: #f39c12;"></i>
+                <i class="fas fa-star" style="color: #f39c12;"></i>
+                <i class="fas fa-star" style="color: #f39c12;"></i>
+                <i class="fas fa-star" style="color: #f39c12;"></i>
+                <i class="fas fa-star" style="color: #f39c12;"></i>
+                <span style="margin-left: 0.5rem;">4.9/5</span>
+              </div>
+              <button class="btn btn-primary btn-small" onclick="alert('Chat with Priya')" style="margin-top: 0.5rem; width: 100%;">
+                <i class="fas fa-comments"></i> Chat Now
+              </button>
+            </div>
+            <div style="border: 1px solid var(--border); border-radius: 8px; padding: 1rem; text-align: center;">
+              <div style="font-size: 3rem; margin-bottom: 0.5rem;">👨‍🌾</div>
+              <h4>Deepak Patel</h4>
+              <p style="color: #9b59b6; font-weight: 600;">Cotton & Sugarcane</p>
+              <p style="font-size: 0.85rem; color: #7f8c8d;">18+ years experience</p>
+              <div style="margin: 0.5rem 0;">
+                <i class="fas fa-star" style="color: #f39c12;"></i>
+                <i class="fas fa-star" style="color: #f39c12;"></i>
+                <i class="fas fa-star" style="color: #f39c12;"></i>
+                <i class="fas fa-star" style="color: #f39c12;"></i>
+                <i class="fas fa-star-half-alt" style="color: #f39c12;"></i>
+                <span style="margin-left: 0.5rem;">4.7/5</span>
+              </div>
+              <button class="btn btn-primary btn-small" onclick="alert('Chat with Deepak')" style="margin-top: 0.5rem; width: 100%;">
+                <i class="fas fa-comments"></i> Chat Now
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Escalation Form -->
+        <div class="card">
+          <h3>📤 Escalate Your Query</h3>
+          <form id="escalationForm">
+            <div class="form-group">
+              <label for="escalationReason">
+                <i class="fas fa-comment-dots"></i> Why do you need expert help? *
+              </label>
+              <select id="escalationReason" required>
+                <option value="">Select reason...</option>
+                <option value="not-resolved">❌ AI Response didn't solve my issue</option>
+                <option value="urgent">🚨 Urgent problem - need immediate help</option>
+                <option value="complex">🤔 Complex issue - need expert advice</option>
+                <option value="crop-loss">💔 Risk of crop loss</option>
+                <option value="other">❓ Other</option>
+              </select>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+              <div class="form-group">
+                <label for="expertPreference">
+                  <i class="fas fa-user-circle"></i> Expert Preference
+                </label>
+                <select id="expertPreference">
+                  <option value="any">Any Available Expert</option>
+                  <option value="rajesh">Rajesh Kumar</option>
+                  <option value="priya">Priya Singh</option>
+                  <option value="deepak">Deepak Patel</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="urgencyLevel">
+                  <i class="fas fa-exclamation-triangle"></i> Urgency Level
+                </label>
+                <select id="urgencyLevel">
+                  <option value="general">⏳ General (24hrs)</option>
+                  <option value="urgent">🔴 Urgent (2-4hrs)</option>
+                  <option value="critical">🚨 Critical (30 mins)</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="escalationDetails">
+                <i class="fas fa-pen"></i> Additional Details *
+              </label>
+              <textarea id="escalationDetails" placeholder="Provide more context about your issue..." rows="4" required></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary">
+              <i class="fas fa-arrow-up"></i> Escalate to Expert
+            </button>
+          </form>
+        </div>
+
+        <!-- Areas of Expertise -->
+        <div class="card">
+          <h3>🎯 Areas of Expertise</h3>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem;">
+            <div style="padding: 1rem; background: rgba(46, 204, 113, 0.1); border-radius: 8px; text-align: center;">
+              <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">🌾</div>
+              <h4>Crop Selection</h4>
+              <p style="font-size: 0.85rem; color: #7f8c8d; margin: 0;">Choose best crops for your soil</p>
+            </div>
+            <div style="padding: 1rem; background: rgba(52, 152, 219, 0.1); border-radius: 8px; text-align: center;">
+              <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">🐛</div>
+              <h4>Pest Management</h4>
+              <p style="font-size: 0.85rem; color: #7f8c8d; margin: 0;">Identify and control pests</p>
+            </div>
+            <div style="padding: 1rem; background: rgba(243, 156, 18, 0.1); border-radius: 8px; text-align: center;">
+              <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">💧</div>
+              <h4>Irrigation Management</h4>
+              <p style="font-size: 0.85rem; color: #7f8c8d; margin: 0;">Optimize water usage</p>
+            </div>
+            <div style="padding: 1rem; background: rgba(155, 89, 182, 0.1); border-radius: 8px; text-align: center;">
+              <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">🌱</div>
+              <h4>Soil & Nutrients</h4>
+              <p style="font-size: 0.85rem; color: #7f8c8d; margin: 0;">Soil health and fertilization</p>
+            </div>
+            <div style="padding: 1rem; background: rgba(230, 126, 34, 0.1); border-radius: 8px; text-align: center;">
+              <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">🚜</div>
+              <h4>Farm Mechanization</h4>
+              <p style="font-size: 0.85rem; color: #7f8c8d; margin: 0;">Equipment and machinery</p>
+            </div>
+            <div style="padding: 1rem; background: rgba(26, 188, 156, 0.1); border-radius: 8px; text-align: center;">
+              <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">🍃</div>
+              <h4>Organic Farming</h4>
+              <p style="font-size: 0.85rem; color: #7f8c8d; margin: 0;">Sustainable farming methods</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="../assets/js/api.js"></script>
+  <script src="../assets/js/app.js"></script>
+
+  <style>
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+    }
+  </style>
+
+  <script>
+    const apiClient = new APIClient();
+    let mediaRecorder = null;
+    let audioChunks = [];
+    let recordingStartTime = null;
+    let recordingTimer = null;
+
+    // ===== IMAGE ANALYSIS HANDLERS =====
+    document.getElementById('cropPhotoInput')?.addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (file) {
+        // Show preview
+        const reader = new FileReader();
+        reader.onload = function(event) {
+          const container = document.getElementById('imagePreviewContainer');
+          const preview = document.getElementById('previewImageThumb');
+          preview.src = event.target.result;
+          container.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    // Handle image analysis form submission
+    document.getElementById('imageAnalysisForm')?.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const cropType = document.getElementById('cropTypeImage').value;
+      const affectedArea = document.getElementById('affectedArea').value;
+      const description = document.getElementById('imageDescription').value;
+      const imageFile = document.getElementById('cropPhotoInput').files[0];
+      
+      if (!imageFile) {
+        alert('❌ Please select a photo first');
+        return;
+      }
+      
+      if (!cropType) {
+        alert('❌ Please enter crop type');
+        return;
+      }
+      
+      try {
+        // Create FormData for file upload
+        const formData = new FormData();
+        formData.append('image', imageFile);
+        formData.append('cropType', cropType);
+        formData.append('affectedArea', affectedArea || 0);
+        formData.append('description', description);
+        
+        // Show loading
+        const btn = e.target.querySelector('button[type="submit"]');
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analyzing...';
+        btn.disabled = true;
+        
+        // Send to API - using multipart/form-data for file upload
+        const response = await fetch('http://localhost:5000/api/v1/image-analysis', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+          },
+          body: formData
+        });
+        
+        const data = await response.json();
+        
+        if (response.status === 401 || data.message === 'Token has expired') {
+          localStorage.clear();
+          window.location.href = 'login-enhanced.html';
+          return;
+        }
+        
+        if (response.ok) {
+          // Display results
+          const resultsDiv = document.getElementById('analysisResults') || document.createElement('div');
+          if (!document.getElementById('analysisResults')) {
+            resultsDiv.id = 'analysisResults';
+            this.parentElement.appendChild(resultsDiv);
+          }
+          
+          resultsDiv.innerHTML = `
+            <div class="card" style="margin-top: 2rem; border-left: 4px solid #9b59b6;">
+              <h3>🔍 Analysis Results</h3>
+              <div style="padding: 1rem; background: rgba(155, 89, 182, 0.1); border-radius: 8px;">
+                <p><strong>Detected Disease/Issue:</strong> ${data.disease || 'Unknown'}</p>
+                <p><strong>Confidence:</strong> ${data.confidence || 'N/A'}%</p>
+                <p><strong>Affected Area:</strong> ${data.affectedArea || 'N/A'}%</p>
+                <h4 style="margin-top: 1rem; color: #2ecc71;">💊 Recommended Treatment:</h4>
+                <p>${data.treatment || data.recommendations || 'Consult with an expert'}</p>
+              </div>
+            </div>
+          `;
+          resultsDiv.style.display = 'block';
+          
+          alert('✅ Analysis complete! Check results below.');
+        } else {
+          alert('❌ ' + (data.message || 'Analysis failed'));
+        }
+        
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+      } catch (error) {
+        console.error('Error:', error);
+        alert('❌ Error: ' + error.message);
+        const btn = e.target.querySelector('button[type="submit"]');
+        btn.innerHTML = '<i class="fas fa-brain"></i> Analyze Photo Now';
+        btn.disabled = false;
+      }
+    });
+
+    // ===== VOICE RECORDING HANDLERS =====
+    document.getElementById('recordButton')?.addEventListener('click', async function(e) {
+      e.preventDefault();
+      
+      if (!mediaRecorder || mediaRecorder.state === 'inactive') {
+        // Start recording
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+          mediaRecorder = new MediaRecorder(stream);
+          audioChunks = [];
+          recordingStartTime = Date.now();
+          
+          mediaRecorder.ondataavailable = (event) => {
+            audioChunks.push(event.data);
+          };
+          
+          mediaRecorder.onstop = async () => {
+            const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+            await processVoiceQuery(audioBlob);
+          };
+          
+          mediaRecorder.start();
+          
+          // Update UI
+          document.getElementById('recordButton').classList.add('btn-danger');
+          document.getElementById('recordButtonText').textContent = '⏹️ Stop Recording';
+          document.getElementById('recordingStatus').style.display = 'block';
+          
+          // Start timer
+          recordingTimer = setInterval(() => {
+            const elapsed = Math.floor((Date.now() - recordingStartTime) / 1000);
+            const mins = Math.floor(elapsed / 60);
+            const secs = elapsed % 60;
+            document.getElementById('recordingTime').textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
+          }, 1000);
+        } catch (error) {
+          alert('❌ Microphone access denied: ' + error.message);
+        }
+      } else if (mediaRecorder.state === 'recording') {
+        // Stop recording
+        mediaRecorder.stop();
+        clearInterval(recordingTimer);
+        
+        // Update UI
+        document.getElementById('recordButton').classList.remove('btn-danger');
+        document.getElementById('recordButtonText').textContent = '🎙️ Start Recording';
+        document.getElementById('recordingStatus').style.display = 'none';
+      }
+    });
+
+    // Audio file upload handler
+    document.getElementById('audioFileInput')?.addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (file) {
+        processVoiceQuery(file);
+      }
+    });
+
+    // Process voice query
+    async function processVoiceQuery(audioBlob) {
+      try {
+        const language = document.getElementById('voiceLanguage')?.value || 'en';
+        const category = document.getElementById('voiceCategory')?.value || 'general';
+        
+        const formData = new FormData();
+        formData.append('audio', audioBlob);
+        formData.append('language', language);
+        formData.append('category', category);
+        
+        alert('🎙️ Processing your voice query... Please wait.');
+        
+        const response = await fetch('http://localhost:5000/api/v1/voice-query', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+          },
+          body: formData
+        });
+        
+        const data = await response.json();
+        
+        if (response.status === 401 || data.message === 'Token has expired') {
+          localStorage.clear();
+          window.location.href = 'login-enhanced.html';
+          return;
+        }
+        
+        if (response.ok) {
+          // Display response
+          const responseDiv = document.getElementById('voiceResponseSection');
+          responseDiv.style.display = 'block';
+          document.getElementById('voiceResponse').innerHTML = `
+            <h4>📝 Your Question (Transcribed):</h4>
+            <p style="font-style: italic; color: #7f8c8d;">${data.transcribedText || 'Processing...'}</p>
+            <h4 style="margin-top: 1rem;">🤖 AI Response:</h4>
+            <p>${data.aiResponse || data.response || 'Processing your query...'}</p>
+          `;
+          
+          if (data.audioUrl) {
+            const audio = new Audio(data.audioUrl);
+            audio.play();
+          }
+        } else {
+          alert('❌ ' + (data.message || 'Failed to process voice query'));
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('❌ Error: ' + error.message);
+      }
+    }
+
+    function toggleVoiceToText() {
+      const textSection = document.getElementById('voiceTextAlternative') || document.createElement('div');
+      if (!document.getElementById('voiceTextAlternative')) {
+        textSection.id = 'voiceTextAlternative';
+        textSection.innerHTML = `
+          <div class="card" style="margin-top: 1rem;">
+            <h3>📝 Type Your Question Instead</h3>
+            <textarea id="voiceTextInput" placeholder="Type your agricultural question here..." rows="3" style="width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;"></textarea>
+            <button class="btn btn-primary" style="margin-top: 0.5rem;" onclick="submitTextQuery()">Submit Question</button>
+          </div>
+        `;
+        document.getElementById('voiceQueriesTab').appendChild(textSection);
+      }
+      textSection.style.display = textSection.style.display === 'none' ? 'block' : 'none';
+    }
+
+    function submitTextQuery() {
+      const text = document.getElementById('voiceTextInput')?.value;
+      if (text) {
+        alert('✅ Text query submitted: ' + text);
+      }
+    }
+
+    // Escalation form handler
+    document.getElementById('escalationForm')?.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const reason = document.getElementById('escalationReason').value;
+      const expert = document.getElementById('expertPreference').value;
+      const urgency = document.getElementById('urgencyLevel').value;
+      const details = document.getElementById('escalationDetails').value;
+      
+      try {
+        const response = await fetch('http://localhost:5000/api/v1/escalate-query', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+          },
+          body: JSON.stringify({
+            reason: reason,
+            expertPreference: expert,
+            urgencyLevel: urgency,
+            details: details
+          })
+        });
+        
+        const data = await response.json();
+        
+        if (response.status === 401 || data.message === 'Token has expired') {
+          localStorage.clear();
+          window.location.href = 'login-enhanced.html';
+          return;
+        }
+        
+        if (response.ok) {
+          alert('✅ Query escalated successfully! Expert will respond within ' + 
+            (urgency === 'critical' ? '30 minutes' : urgency === 'urgent' ? '2-4 hours' : '24 hours'));
+          this.reset();
+        } else {
+          alert('❌ ' + (data.message || 'Escalation failed'));
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('❌ Error: ' + error.message);
+      }
+    });
+
+    // Real-time character counter
+    document.getElementById('query')?.addEventListener('input', function() {
+      const counter = document.getElementById('queryCharCount');
+      if (counter) {
+        counter.textContent = `${this.value.length}/500 characters`;
+      }
+    });
+
+    // Start chat with expert
+    function startChat(expertName, expertEmail) {
+      alert(`✅ Chat initiated with ${expertName}!\\n\\nExpert will respond shortly.\\nYour chat link has been sent to your email.`);
+    }
+
+    function logout() {
+      localStorage.clear();
+      window.location.href = 'login-enhanced.html';
+    }
+
+    // Redirect if not logged in
+    window.addEventListener('load', () => {
+      const token = localStorage.getItem('accessToken');
+      if (!token) {
+        window.location.href = 'login-enhanced.html';
+        return;
+      }
+
+      // Auto-switch tab based on URL query param '?tab=...' or sessionStorage
+      const params = new URLSearchParams(window.location.search);
+      let tab = params.get('tab') || sessionStorage.getItem('selectedTab');
+      if (tab) {
+        sessionStorage.removeItem('selectedTab');
+        setTimeout(() => {
+          if (window.app && typeof window.app.switchTab === 'function') {
+            window.app.switchTab(tab);
+          }
+        }, 150);
+      }
+    });
+  </script>
+  <script src="../assets/js/chatbot-widget.js"></script>
+</body>
+</html>

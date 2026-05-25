@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register - Farmer Query Support System</title>
+  <link rel="stylesheet" href="../assets/css/enhanced-styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    .register-container {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #2ecc71 0%, #3498db 100%);
+      padding: 2rem 0;
+    }
+
+    .register-card {
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+      width: 100%;
+      max-width: 600px;
+    }
+
+    .register-header {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .register-header h1 {
+      color: #2ecc71;
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .register-header p {
+      color: #7f8c8d;
+      font-size: 0.95rem;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .password-requirements {
+      background: rgba(46, 204, 113, 0.1);
+      border: 1px solid #2ecc71;
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      font-size: 0.9rem;
+    }
+
+    .requirement {
+      margin: 0.3rem 0;
+      color: #7f8c8d;
+    }
+
+    .requirement.met {
+      color: #2ecc71;
+    }
+
+    .requirement i {
+      margin-right: 0.5rem;
+    }
+
+    .role-selector {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .role-option {
+      position: relative;
+      display: none;
+    }
+
+    .role-option input[type="radio"] {
+      display: none;
+    }
+
+    .role-label {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 1rem;
+      border: 2px solid var(--light);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: var(--transition);
+      text-align: center;
+    }
+
+    .role-label i {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+      color: var(--primary);
+    }
+
+    .role-option input[type="radio"]:checked + .role-label {
+      border-color: var(--primary);
+      background: rgba(46, 204, 113, 0.05);
+    }
+
+    .terms {
+      font-size: 0.85rem;
+      color: #7f8c8d;
+      margin-bottom: 1rem;
+    }
+
+    .terms input {
+      width: auto;
+      margin-right: 0.5rem;
+    }
+
+    .login-link {
+      text-align: center;
+      margin-top: 1.5rem;
+      color: #7f8c8d;
+    }
+
+    .login-link a {
+      color: #2ecc71;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .login-link a:hover {
+      text-decoration: underline;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 4px;
+      background: var(--light);
+      border-radius: 2px;
+      margin-bottom: 1rem;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--primary);
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    @media (max-width: 600px) {
+      .register-card {
+        padding: 1.5rem;
+      }
+
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+
+      .role-selector {
+        grid-template-columns: 1fr;
+      }
+
+      .register-header h1 {
+        font-size: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="container">
+      <div class="navbar-brand">
+        <a href="../index.html" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+          <h1><i class="fas fa-leaf"></i> Farmer Query Support</h1>
+        </a>
+      </div>
+      <div class="navbar-menu">
+        <a href="login-enhanced.html" class="nav-link">
+          <i class="fas fa-sign-in-alt"></i> Login
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="register-container">
+    <div class="register-card">
+      <!-- Header -->
+      <div class="register-header">
+        <h1><i class="fas fa-leaf"></i> Create Account</h1>
+        <p>Join our agricultural support community</p>
+      </div>
+
+      <!-- Alert Message -->
+      <div id="alertMessage" class="alert" style="display: none; margin-bottom: 1.5rem;"></div>
+
+      <!-- Registration Form -->
+      <form id="registerForm">
+        <!-- Role Selection -->
+        <label style="font-weight: 600; margin-bottom: 0.5rem; display: block;">
+          <i class="fas fa-user-tag"></i> Select Your Role *
+        </label>
+        <div class="role-selector">
+          <label class="role-option">
+            <input type="radio" name="role" value="farmer" required checked>
+            <div class="role-label">
+              <i class="fas fa-user-tie"></i>
+              <span>Farmer</span>
+            </div>
+          </label>
+          <label class="role-option">
+            <input type="radio" name="role" value="officer">
+            <div class="role-label">
+              <i class="fas fa-user-secret"></i>
+              <span>Officer</span>
+            </div>
+          </label>
+        </div>
+
+        <!-- Personal Information -->
+        <h3 style="color: var(--primary); margin-bottom: 1rem;">Personal Information</h3>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="firstName">
+              <i class="fas fa-user"></i> First Name *
+            </label>
+            <input type="text" id="firstName" name="firstName" placeholder="First name" required>
+          </div>
+          <div class="form-group">
+            <label for="lastName">
+              <i class="fas fa-user"></i> Last Name *
+            </label>
+            <input type="text" id="lastName" name="lastName" placeholder="Last name" required>
+          </div>
+        </div>
+
+        <!-- Email & Phone -->
+        <div class="form-row">
+          <div class="form-group">
+            <label for="email">
+              <i class="fas fa-envelope"></i> Email Address *
+            </label>
+            <input type="email" id="email" name="email" placeholder="your@email.com" required>
+          </div>
+          <div class="form-group">
+            <label for="phoneNumber">
+              <i class="fas fa-phone"></i> Phone Number
+            </label>
+            <input type="tel" id="phoneNumber" name="phoneNumber" placeholder="10-digit mobile number" minlength="10" maxlength="10" pattern="^[6-9][0-9]{9}$" title="Phone number must be exactly 10 digits and start with 6, 7, 8, or 9">
+          </div>
+        </div>
+
+        <!-- Location -->
+        <div class="form-group">
+          <label for="state">
+            <i class="fas fa-map-marker-alt"></i> State *
+          </label>
+          <select id="state" name="state" required>
+            <option value="">Select your state...</option>
+            <option value="Punjab">Punjab</option>
+            <option value="Haryana">Haryana</option>
+            <option value="Uttar Pradesh">Uttar Pradesh</option>
+            <option value="Madhya Pradesh">Madhya Pradesh</option>
+            <option value="Karnataka">Karnataka</option>
+            <option value="Maharashtra">Maharashtra</option>
+            <option value="Rajasthan">Rajasthan</option>
+            <option value="Gujarat">Gujarat</option>
+            <option value="Tamil Nadu">Tamil Nadu</option>
+            <option value="Telangana">Telangana</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+
+        <!-- Password -->
+        <h3 style="color: var(--primary); margin-bottom: 1rem; margin-top: 1.5rem;">Security</h3>
+
+        <div class="form-group">
+          <label for="password">
+            <i class="fas fa-lock"></i> Password *
+          </label>
+          <input type="password" id="password" name="password" placeholder="Minimum 8 characters" required>
+        </div>
+
+        <!-- Password Requirements -->
+        <div class="password-requirements">
+          <div id="req-length" class="requirement"><i class="fas fa-times-circle"></i> Minimum 8 characters</div>
+          <div id="req-upper" class="requirement"><i class="fas fa-times-circle"></i> Contains uppercase letter</div>
+          <div id="req-lower" class="requirement"><i class="fas fa-times-circle"></i> Contains lowercase letter</div>
+          <div id="req-number" class="requirement"><i class="fas fa-times-circle"></i> Contains number</div>
+        </div>
+
+        <!-- Confirm Password -->
+        <div class="form-group">
+          <label for="confirmPassword">
+            <i class="fas fa-lock"></i> Confirm Password *
+          </label>
+          <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Repeat password" required>
+          <small id="passwordMatch" style="color: var(--danger); display: none;">Passwords do not match</small>
+        </div>
+
+        <!-- Terms & Conditions -->
+        <label class="terms">
+          <input type="checkbox" id="terms" name="terms" required>
+          I agree to the Terms of Service and Privacy Policy
+        </label>
+
+        <!-- Register Button -->
+        <button type="submit" class="btn btn-primary btn-block" style="padding: 0.9rem; font-size: 1.05rem;">
+          <i class="fas fa-user-plus"></i> Create Account
+        </button>
+
+        <!-- Loading Spinner -->
+        <div class="loading-spinner" id="loadingSpinner" style="display: none;">
+          <div class="spinner"></div>
+          <p>Creating your account...</p>
+        </div>
+      </form>
+
+      <!-- Login Link -->
+      <div class="login-link">
+        Already have an account? 
+        <a href="login-enhanced.html"><i class="fas fa-sign-in-alt"></i> Login Here</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="../assets/js/api.js"></script>
+  <script>
+    const apiClient = new APIClient();
+    const passwordInput = document.getElementById('password');
+    const confirmInput = document.getElementById('confirmPassword');
+
+    // Real-time role selector visibility
+    document.querySelectorAll('.role-option').forEach(option => {
+      option.style.display = 'block';
+    });
+
+    // Password validation
+    function validatePassword() {
+      const password = passwordInput.value;
+      
+      const checks = {
+        'req-length': password.length >= 8,
+        'req-upper': /[A-Z]/.test(password),
+        'req-lower': /[a-z]/.test(password),
+        'req-number': /[0-9]/.test(password),
+      };
+
+      let allMet = true;
+      for (const [id, met] of Object.entries(checks)) {
+        const elem = document.getElementById(id);
+        if (met) {
+          elem.classList.add('met');
+          elem.innerHTML = elem.innerHTML.replace('times-circle', 'check-circle');
+        } else {
+          elem.classList.remove('met');
+          elem.innerHTML = elem.innerHTML.replace('check-circle', 'times-circle');
+          allMet = false;
+        }
+      }
+
+      return allMet;
+    }
+
+    // Password match validation
+    function validatePasswordMatch() {
+      const match = passwordInput.value === confirmInput.value && confirmInput.value.length > 0;
+      const matchSpan = document.getElementById('passwordMatch');
+      
+      if (match) {
+        matchSpan.style.display = 'none';
+        confirmInput.classList.add('is-valid');
+      } else if (confirmInput.value.length > 0) {
+        matchSpan.style.display = 'block';
+        confirmInput.classList.add('is-invalid');
+      } else {
+        matchSpan.style.display = 'none';
+        confirmInput.classList.remove('is-invalid', 'is-valid');
+      }
+
+      return match;
+    }
+
+    passwordInput.addEventListener('input', validatePassword);
+    confirmInput.addEventListener('input', validatePasswordMatch);
+
+    // Show alert
+    function showAlert(message, type = 'info') {
+      const alertDiv = document.getElementById('alertMessage');
+      alertDiv.className = `alert alert-${type}`;
+      alertDiv.innerHTML = `
+        <span>${message}</span>
+        <button onclick="this.parentElement.style.display='none'" class="close-btn">&times;</button>
+      `;
+      alertDiv.style.display = 'flex';
+    }
+
+    // Handle registration
+    document.getElementById('registerForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      if (!validatePassword() || !validatePasswordMatch()) {
+        showAlert('❌ Please fix password requirements', 'error');
+        return;
+      }
+
+      const phoneNumber = document.getElementById('phoneNumber').value;
+      if (phoneNumber && !/^[6-9]\d{9}$/.test(phoneNumber)) {
+        showAlert('❌ Phone number must be exactly 10 digits and start with 6, 7, 8, or 9', 'error');
+        return;
+      }
+
+      if (!document.getElementById('terms').checked) {
+        showAlert('❌ Please agree to terms and conditions', 'error');
+        return;
+      }
+
+      const spinner = document.getElementById('loadingSpinner');
+      spinner.style.display = 'block';
+
+      try {
+        const formData = {
+          email: document.getElementById('email').value,
+          password: document.getElementById('password').value,
+          confirmPassword: document.getElementById('confirmPassword').value,
+          phoneNumber: document.getElementById('phoneNumber').value,
+          role: document.querySelector('input[name="role"]:checked').value,
+          firstName: document.getElementById('firstName').value,
+          lastName: document.getElementById('lastName').value,
+          state: document.getElementById('state').value
+        };
+
+        const response = await apiClient.register(formData);
+        
+        showAlert('✅ Account created successfully! Redirecting to login...', 'success');
+        
+        setTimeout(() => {
+          window.location.href = 'login-enhanced.html';
+        }, 2000);
+      } catch (error) {
+        let msg = error.message;
+        if (error.errors && error.errors.length > 0) {
+          msg += ': ' + error.errors.map(e => e.message).join(', ');
+        }
+        showAlert(`❌ Registration failed: ${msg}`, 'error');
+      } finally {
+        spinner.style.display = 'none';
+      }
+    });
+  </script>
+</body>
+</html>

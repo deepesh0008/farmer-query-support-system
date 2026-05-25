@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Expert Support - Feature Preview</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="../assets/css/styles.css">
+  <style>
+    body {
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      min-height: 100vh;
+    }
+    .navbar {
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: white;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+    .preview-header {
+      text-align: center;
+      padding: 3rem 0;
+      color: white;
+      background: linear-gradient(135deg, #1abc9c 0%, #16a085 100%);
+    }
+    .preview-header h1 {
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+    }
+    .preview-header p {
+      font-size: 1.2rem;
+      opacity: 0.95;
+    }
+    .demo-section {
+      background: white;
+      padding: 2rem;
+      margin: 2rem 0;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .expert-card {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 1.5rem;
+      padding: 1.5rem;
+      background: linear-gradient(135deg, rgba(26, 188, 156, 0.1) 0%, rgba(22, 160, 133, 0.1) 100%);
+      border-left: 4px solid #1abc9c;
+      border-radius: 8px;
+      margin-bottom: 1.5rem;
+      align-items: center;
+    }
+    .expert-avatar {
+      width: 80px;
+      height: 80px;
+      background: #1abc9c;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 2rem;
+    }
+    .expert-info h4 {
+      color: #1abc9c;
+      margin-top: 0;
+    }
+    .expert-info p {
+      color: #666;
+      margin: 0.3rem 0;
+      font-size: 0.9rem;
+    }
+    .escalation-process {
+      counter-reset: step-counter;
+      list-style: none;
+      padding: 0;
+    }
+    .escalation-process li {
+      counter-increment: step-counter;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      background: #f8f9fa;
+      border-left: 4px solid #1abc9c;
+      border-radius: 4px;
+      position: relative;
+      padding-left: 2rem;
+    }
+    .escalation-process li::before {
+      content: counter(step-counter);
+      position: absolute;
+      left: -12px;
+      top: -12px;
+      width: 24px;
+      height: 24px;
+      background: #1abc9c;
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 0.9rem;
+    }
+    .features-list {
+      list-style: none;
+      padding: 0;
+    }
+    .features-list li {
+      padding: 0.8rem 0;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .features-list li:last-child {
+      border-bottom: none;
+    }
+    .features-list i {
+      color: #1abc9c;
+      font-size: 1.2rem;
+    }
+    .response-time {
+      padding: 1rem;
+      background: linear-gradient(135deg, rgba(26, 188, 156, 0.1) 0%, rgba(22, 160, 133, 0.1) 100%);
+      border-left: 4px solid #1abc9c;
+      border-radius: 4px;
+      margin: 1rem 0;
+    }
+    .response-time strong {
+      color: #1abc9c;
+    }
+    .chat-demo {
+      background: #f8f9fa;
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    .message {
+      margin-bottom: 1rem;
+      padding: 0.8rem;
+      border-radius: 6px;
+      max-width: 80%;
+    }
+    .message.user {
+      background: #1abc9c;
+      color: white;
+      margin-left: auto;
+      text-align: right;
+    }
+    .message.expert {
+      background: #ecf0f1;
+      color: #333;
+      margin-right: auto;
+    }
+    .expertise-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+    .expertise-item {
+      padding: 1rem;
+      background: linear-gradient(135deg, rgba(26, 188, 156, 0.1) 0%, rgba(22, 160, 133, 0.1) 100%);
+      border-radius: 8px;
+      text-align: center;
+      border: 2px solid #1abc9c;
+    }
+    .expertise-item .icon {
+      font-size: 2rem;
+      color: #1abc9c;
+      margin-bottom: 0.5rem;
+    }
+    .expertise-item p {
+      color: #666;
+      font-size: 0.9rem;
+      margin: 0;
+    }
+    .login-section {
+      text-align: center;
+      padding: 2rem;
+      background: linear-gradient(135deg, #1abc9c 0%, #16a085 100%);
+      color: white;
+      border-radius: 12px;
+      margin: 2rem 0;
+    }
+    .login-btn {
+      padding: 1rem 2rem;
+      background: white;
+      color: #1abc9c;
+      text-decoration: none;
+      border-radius: 6px;
+      font-weight: 600;
+      display: inline-block;
+      transition: transform 0.3s;
+    }
+    .login-btn:hover {
+      transform: scale(1.05);
+    }
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #1abc9c;
+      text-decoration: none;
+      font-weight: 600;
+      margin: 1rem 0;
+    }
+    .back-btn:hover {
+      color: #16a085;
+    }
+  </style>
+  <script>
+    // Automatic redirect if already logged in
+    (function() {
+      const token = localStorage.getItem('token') || localStorage.getItem('accessToken');
+      const userStr = localStorage.getItem('user');
+      if (token && userStr) {
+        try {
+          const user = JSON.parse(userStr);
+          if (user && user.role) {
+            let dashboardUrl = 'farmer-dashboard-enhanced.html';
+            if (user.role === 'officer') {
+              dashboardUrl = 'officer-dashboard.html';
+            } else if (user.role === 'admin') {
+              dashboardUrl = 'admin-dashboard.html';
+            }
+            window.location.href = `${dashboardUrl}?tab=expert-support`;
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      }
+    })();
+  </script>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="container" style="display: flex; justify-content: space-between; align-items: center;">
+      <a href="../index.html" style="text-decoration: none; display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+        <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #2ecc71 0%, #3498db 100%); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 1.5rem;">
+          <i class="fas fa-leaf"></i>
+        </div>
+        <span style="font-weight: 700; color: #333; font-size: 1.1rem;">Farmer Query</span>
+      </a>
+      <div style="display: flex; gap: 1rem;">
+        <a href="../index.html" class="back-btn">
+          <i class="fas fa-arrow-left"></i> Back to Home
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Preview Header -->
+  <section class="preview-header">
+    <div class="container">
+      <h1><i class="fas fa-headset"></i> Expert Support</h1>
+      <p>Get personalized guidance from certified agricultural officers for complex queries</p>
+    </div>
+  </section>
+
+  <!-- Main Content -->
+  <div class="container">
+    <!-- Expert Support Overview -->
+    <div class="demo-section">
+      <h2 style="text-align: center; color: #333; margin-bottom: 2rem;"><i class="fas fa-star"></i> Meet Our Expert Network</h2>
+      <p style="text-align: center; color: #666; margin-bottom: 2rem;">150+ certified agricultural officers available 24/7 to help you</p>
+      
+      <div class="expert-card">
+        <div class="expert-avatar">
+          <i class="fas fa-user-tie"></i>
+        </div>
+        <div class="expert-info">
+          <h4>Rajesh Kumar</h4>
+          <p><strong>Specialization:</strong> Wheat & Rice Cultivation</p>
+          <p><strong>Experience:</strong> 15+ years</p>
+          <p><strong>Avg. Response Time:</strong> 10 minutes</p>
+          <p><strong>Rating:</strong> ⭐⭐⭐⭐⭐ (4.8/5)</p>
+        </div>
+      </div>
+
+      <div class="expert-card">
+        <div class="expert-avatar">
+          <i class="fas fa-user-nurse"></i>
+        </div>
+        <div class="expert-info">
+          <h4>Priya Singh</h4>
+          <p><strong>Specialization:</strong> Vegetable Farming</p>
+          <p><strong>Experience:</strong> 12+ years</p>
+          <p><strong>Avg. Response Time:</strong> 15 minutes</p>
+          <p><strong>Rating:</strong> ⭐⭐⭐⭐⭐ (4.9/5)</p>
+        </div>
+      </div>
+
+      <div class="expert-card">
+        <div class="expert-avatar">
+          <i class="fas fa-user"></i>
+        </div>
+        <div class="expert-info">
+          <h4>Deepak Patel</h4>
+          <p><strong>Specialization:</strong> Cotton & Sugarcane</p>
+          <p><strong>Experience:</strong> 18+ years</p>
+          <p><strong>Avg. Response Time:</strong> 12 minutes</p>
+          <p><strong>Rating:</strong> ⭐⭐⭐⭐⭐ (4.7/5)</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Expertise Areas -->
+    <div class="demo-section">
+      <h2 style="color: #333; margin-bottom: 1.5rem;"><i class="fas fa-graduation-cap"></i> Areas of Expertise</h2>
+      <p style="color: #666; margin-bottom: 1.5rem;">Our experts cover all major agricultural domains</p>
+      
+      <div class="expertise-grid">
+        <div class="expertise-item">
+          <div class="icon"><i class="fas fa-leaf"></i></div>
+          <p>Crop Selection & Planning</p>
+        </div>
+        <div class="expertise-item">
+          <div class="icon"><i class="fas fa-bug"></i></div>
+          <p>Pest & Disease Management</p>
+        </div>
+        <div class="expertise-item">
+          <div class="icon"><i class="fas fa-water"></i></div>
+          <p>Irrigation Techniques</p>
+        </div>
+        <div class="expertise-item">
+          <div class="icon"><i class="fas fa-flask"></i></div>
+          <p>Soil & Nutrient Management</p>
+        </div>
+        <div class="expertise-item">
+          <div class="icon"><i class="fas fa-tractor"></i></div>
+          <p>Farm Mechanization</p>
+        </div>
+        <div class="expertise-item">
+          <div class="icon"><i class="fas fa-leaf"></i></div>
+          <p>Organic Farming</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- How to Escalate -->
+    <div class="demo-section">
+      <h2 style="color: #333; margin-bottom: 1.5rem;"><i class="fas fa-arrow-up"></i> How to Get Expert Support</h2>
+      
+      <ol class="escalation-process">
+        <li><strong>Submit Your Query</strong> - Ask your farming question using text, voice, or image</li>
+        <li><strong>AI Initial Response</strong> - Get instant automated recommendations from our AI system</li>
+        <li><strong>Escalate if Needed</strong> - If you need more detailed help, click "Escalate to Expert"</li>
+        <li><strong>Connect with Expert</strong> - Get assigned to the best-matched agricultural officer</li>
+        <li><strong>Get Expert Guidance</strong> - Receive personalized recommendations and follow-up support</li>
+        <li><strong>Implement & Track</strong> - Apply recommendations and track your progress</li>
+      </ol>
+    </div>
+
+    <!-- Chat Demo -->
+    <div class="demo-section">
+      <h2 style="color: #333; margin-bottom: 1.5rem;"><i class="fas fa-comments"></i> Example Support Conversation</h2>
+      
+      <div class="chat-demo">
+        <div class="message user">
+          My cotton plants are wilting despite regular irrigation. What could be wrong?
+        </div>
+        <div class="message expert">
+          <strong>Deepak (Expert):</strong> Thank you for the query. Wilting despite irrigation usually indicates root rot or soil salinity. Can you tell me:
+          1) How much irrigation per day?
+          2) Is the soil well-draining?
+          3) Any discoloration on stems?
+        </div>
+        <div class="message user">
+          3-4 hours daily, the field has poor drainage, and yes there's a brownish color on the stem base
+        </div>
+        <div class="message expert">
+          <strong>Deepak (Expert):</strong> This is clearly root rot. Here's what you need to do:
+          
+          <strong>Immediate actions:</strong>
+          • Stop irrigation for 5-7 days to dry the soil
+          • Improve field drainage with channels
+          • Remove severely affected plants
+          
+          <strong>Treatment:</strong>
+          • Apply Trichoderma solution (bio-fungicide) with irrigation
+          • Use Copper Fungicide spray on stems
+          
+          <strong>Prevention:</strong>
+          • Reduce irrigation frequency in monsoon
+          • Choose well-drained fields for cotton
+          • Use seed treatment before planting
+          
+          Would you like detailed product recommendations?
+        </div>
+        <div class="message user">
+          Yes please, and what's the expected recovery time?
+        </div>
+        <div class="message expert">
+          <strong>Deepak (Expert):</strong> Check the detailed guide I've sent. Recovery takes 2-3 weeks if caught early. Also, I've scheduled a follow-up video call tomorrow at 10 AM to assess your field personally. You'll receive a call link soon. Any other concerns?
+        </div>
+      </div>
+    </div>
+
+    <!-- Response Times -->
+    <div class="demo-section">
+      <h2 style="color: #333; margin-bottom: 1.5rem;"><i class="fas fa-clock"></i> Response Guarantees</h2>
+      
+      <div class="response-time">
+        <strong>🟢 Critical Issues:</strong> Expert response within 30 minutes (24/7)
+      </div>
+      <div class="response-time">
+        <strong>🟡 Urgent Queries:</strong> Expert response within 2-4 hours
+      </div>
+      <div class="response-time">
+        <strong>🔵 General Questions:</strong> Expert response within 24 hours
+      </div>
+      <div class="response-time">
+        <strong>📞 Video Consultations:</strong> Available for in-depth discussions on crop issues
+      </div>
+    </div>
+
+    <!-- Key Features -->
+    <div class="demo-section">
+      <h3 style="color: #1abc9c; margin-bottom: 1rem;"><i class="fas fa-star"></i> Expert Support Features</h3>
+      <ul class="features-list">
+        <li><i class="fas fa-check-circle"></i> Direct messaging with certified officers</li>
+        <li><i class="fas fa-check-circle"></i> Video consultation capability</li>
+        <li><i class="fas fa-check-circle"></i> Follow-up support and progress tracking</li>
+        <li><i class="fas fa-check-circle"></i> Expert-curated resource library</li>
+        <li><i class="fas fa-check-circle"></i> Priority support for critical issues</li>
+        <li><i class="fas fa-check-circle"></i> Bilingual communication support</li>
+      </ul>
+    </div>
+
+    <!-- Benefits -->
+    <div class="demo-section">
+      <h3 style="color: #1abc9c; margin-bottom: 1rem;"><i class="fas fa-gift"></i> Why Choose Expert Support</h3>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem;">
+        <div style="padding: 1rem; background: linear-gradient(135deg, rgba(26, 188, 156, 0.1) 0%, rgba(22, 160, 133, 0.1) 100%); border-radius: 8px;">
+          <h4 style="color: #1abc9c; margin-top: 0;"><i class="fas fa-check"></i> Certified Experts</h4>
+          <p style="color: #666;">All officers are certified agricultural specialists with years of experience</p>
+        </div>
+        <div style="padding: 1rem; background: linear-gradient(135deg, rgba(26, 188, 156, 0.1) 0%, rgba(22, 160, 133, 0.1) 100%); border-radius: 8px;">
+          <h4 style="color: #1abc9c; margin-top: 0;"><i class="fas fa-check"></i> Quick Response</h4>
+          <p style="color: #666;">Get expert advice within hours, not weeks like traditional offices</p>
+        </div>
+        <div style="padding: 1rem; background: linear-gradient(135deg, rgba(26, 188, 156, 0.1) 0%, rgba(22, 160, 133, 0.1) 100%); border-radius: 8px;">
+          <h4 style="color: #1abc9c; margin-top: 0;"><i class="fas fa-check"></i> Personalized Help</h4>
+          <p style="color: #666;">Get advice tailored to your specific farm, crops, and conditions</p>
+        </div>
+        <div style="padding: 1rem; background: linear-gradient(135deg, rgba(26, 188, 156, 0.1) 0%, rgba(22, 160, 133, 0.1) 100%); border-radius: 8px;">
+          <h4 style="color: #1abc9c; margin-top: 0;"><i class="fas fa-check"></i> 24/7 Availability</h4>
+          <p style="color: #666;">Experts available round-the-clock including weekends and holidays</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Login Section -->
+    <div class="login-section">
+      <h2><i class="fas fa-lock"></i> Get Expert Agricultural Guidance Now!</h2>
+      <p style="margin-bottom: 1.5rem;">Login or register to escalate complex queries to our network of certified agricultural officers and get personalized expert support.</p>
+      <a href="login-enhanced.html" class="login-btn">
+        <i class="fas fa-sign-in-alt"></i> Login Now
+      </a>
+      <p style="margin-top: 1rem;">Don't have an account? <a href="register-enhanced.html" style="color: white; text-decoration: underline;">Register here</a></p>
+    </div>
+
+    <!-- Footer -->
+    <div style="text-align: center; padding: 2rem 0; border-top: 1px solid #eee; margin-top: 2rem;">
+      <a href="../index.html" class="back-btn">
+        <i class="fas fa-arrow-left"></i> Back to Home
+      </a>
+    </div>
+  </div>
+</body>
+</html>

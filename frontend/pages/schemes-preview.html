@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Government Schemes - Feature Preview</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="../assets/css/styles.css">
+  <style>
+    body {
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      min-height: 100vh;
+    }
+    .navbar {
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: white;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+    .preview-header {
+      text-align: center;
+      padding: 3rem 0;
+      color: white;
+      background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
+    }
+    .preview-header h1 {
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+    }
+    .preview-header p {
+      font-size: 1.2rem;
+      opacity: 0.95;
+    }
+    .demo-section {
+      background: white;
+      padding: 2rem;
+      margin: 2rem 0;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .scheme-card {
+      padding: 1.5rem;
+      background: linear-gradient(135deg, rgba(155, 89, 182, 0.1) 0%, rgba(142, 68, 173, 0.1) 100%);
+      border-left: 4px solid #9b59b6;
+      border-radius: 8px;
+      margin-bottom: 1.5rem;
+    }
+    .scheme-card h4 {
+      color: #9b59b6;
+      margin-top: 0;
+      font-size: 1.2rem;
+    }
+    .scheme-card .benefit {
+      display: inline-block;
+      background: white;
+      padding: 0.3rem 0.8rem;
+      border-radius: 20px;
+      color: #9b59b6;
+      font-size: 0.85rem;
+      margin-right: 0.5rem;
+      margin-top: 0.5rem;
+    }
+    .scheme-filters {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .filter-btn {
+      padding: 0.8rem 1rem;
+      border: 2px solid #9b59b6;
+      background: white;
+      color: #9b59b6;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s;
+    }
+    .filter-btn:hover {
+      background: #9b59b6;
+      color: white;
+    }
+    .filter-btn.active {
+      background: #9b59b6;
+      color: white;
+    }
+    .features-list {
+      list-style: none;
+      padding: 0;
+    }
+    .features-list li {
+      padding: 0.8rem 0;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .features-list li:last-child {
+      border-bottom: none;
+    }
+    .features-list i {
+      color: #9b59b6;
+      font-size: 1.2rem;
+    }
+    .eligibility {
+      padding: 1rem;
+      background: linear-gradient(135deg, rgba(155, 89, 182, 0.1) 0%, rgba(142, 68, 173, 0.1) 100%);
+      border-left: 4px solid #9b59b6;
+      border-radius: 4px;
+      margin: 1rem 0;
+    }
+    .application-process {
+      counter-reset: step-counter;
+      list-style: none;
+      padding: 0;
+    }
+    .application-process li {
+      counter-increment: step-counter;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      background: #f8f9fa;
+      border-left: 4px solid #9b59b6;
+      border-radius: 4px;
+      position: relative;
+      padding-left: 2rem;
+    }
+    .application-process li::before {
+      content: counter(step-counter);
+      position: absolute;
+      left: -12px;
+      top: -12px;
+      width: 24px;
+      height: 24px;
+      background: #9b59b6;
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 0.9rem;
+    }
+    .login-section {
+      text-align: center;
+      padding: 2rem;
+      background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
+      color: white;
+      border-radius: 12px;
+      margin: 2rem 0;
+    }
+    .login-btn {
+      padding: 1rem 2rem;
+      background: white;
+      color: #9b59b6;
+      text-decoration: none;
+      border-radius: 6px;
+      font-weight: 600;
+      display: inline-block;
+      transition: transform 0.3s;
+    }
+    .login-btn:hover {
+      transform: scale(1.05);
+    }
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #9b59b6;
+      text-decoration: none;
+      font-weight: 600;
+      margin: 1rem 0;
+    }
+    .back-btn:hover {
+      color: #8e44ad;
+    }
+  </style>
+  <script>
+    // Automatic redirect if already logged in
+    (function() {
+      const token = localStorage.getItem('token') || localStorage.getItem('accessToken');
+      const userStr = localStorage.getItem('user');
+      if (token && userStr) {
+        try {
+          const user = JSON.parse(userStr);
+          if (user && user.role) {
+            let dashboardUrl = 'farmer-dashboard-enhanced.html';
+            if (user.role === 'officer') {
+              dashboardUrl = 'officer-dashboard.html';
+            } else if (user.role === 'admin') {
+              dashboardUrl = 'admin-dashboard.html';
+            }
+            window.location.href = `${dashboardUrl}?tab=schemes`;
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      }
+    })();
+  </script>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="container" style="display: flex; justify-content: space-between; align-items: center;">
+      <a href="../index.html" style="text-decoration: none; display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+        <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #2ecc71 0%, #3498db 100%); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 1.5rem;">
+          <i class="fas fa-leaf"></i>
+        </div>
+        <span style="font-weight: 700; color: #333; font-size: 1.1rem;">Farmer Query</span>
+      </a>
+      <div style="display: flex; gap: 1rem;">
+        <a href="../index.html" class="back-btn">
+          <i class="fas fa-arrow-left"></i> Back to Home
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Preview Header -->
+  <section class="preview-header">
+    <div class="container">
+      <h1><i class="fas fa-file-contract"></i> Government Schemes</h1>
+      <p>Discover and apply for agricultural subsidies, loans, and schemes</p>
+    </div>
+  </section>
+
+  <!-- Main Content -->
+  <div class="container">
+    <!-- Scheme Finder -->
+    <div class="demo-section">
+      <h2 style="text-align: center; color: #333; margin-bottom: 1.5rem;"><i class="fas fa-search"></i> Find Schemes for You</h2>
+      <p style="text-align: center; color: #666; margin-bottom: 1.5rem;">Filter schemes by type, crop, or state to find the best benefits for you</p>
+      
+      <div class="scheme-filters">
+        <button class="filter-btn active">All Schemes</button>
+        <button class="filter-btn">Subsidies</button>
+        <button class="filter-btn">Loans</button>
+        <button class="filter-btn">Insurance</button>
+        <button class="filter-btn">Training</button>
+      </div>
+    </div>
+
+    <!-- Featured Schemes -->
+    <div class="demo-section">
+      <h2 style="color: #333; margin-bottom: 1.5rem;"><i class="fas fa-star"></i> Featured Schemes for Farmers</h2>
+      
+      <div class="scheme-card">
+        <h4><i class="fas fa-tractor"></i> Pradhan Mantri Kisan Samman Nidhi (PM-KISAN)</h4>
+        <p style="color: #666; margin-top: 0.5rem;">Direct cash benefit of ₹6,000 per year to all farmers</p>
+        <div>
+          <span class="benefit"><i class="fas fa-gift"></i> ₹6,000/year</span>
+          <span class="benefit"><i class="fas fa-users"></i> All Farmers</span>
+        </div>
+        <p style="color: #9b59b6; font-weight: 600; margin-top: 1rem; cursor: pointer;">View Details →</p>
+      </div>
+
+      <div class="scheme-card">
+        <h4><i class="fas fa-seedling"></i> Pradhan Mantri Fasal Bima Yojana (PMFBY)</h4>
+        <p style="color: #666; margin-top: 0.5rem;">Crop insurance scheme protecting against losses from natural calamities</p>
+        <div>
+          <span class="benefit"><i class="fas fa-shield"></i> Comprehensive Coverage</span>
+          <span class="benefit"><i class="fas fa-dollar-sign"></i> Low Premium</span>
+        </div>
+        <p style="color: #9b59b6; font-weight: 600; margin-top: 1rem; cursor: pointer;">View Details →</p>
+      </div>
+
+      <div class="scheme-card">
+        <h4><i class="fas fa-hand-holding-water"></i> Pradhan Mantri Krishi Sinchayee Yojana</h4>
+        <p style="color: #666; margin-top: 0.5rem;">Subsidies for irrigation infrastructure and micro-irrigation systems</p>
+        <div>
+          <span class="benefit"><i class="fas fa-water"></i> Irrigation Support</span>
+          <span class="benefit"><i class="fas fa-recycle"></i> Water Conservation</span>
+        </div>
+        <p style="color: #9b59b6; font-weight: 600; margin-top: 1rem; cursor: pointer;">View Details →</p>
+      </div>
+
+      <div class="scheme-card">
+        <h4><i class="fas fa-leaf"></i> Soil Health Card Scheme</h4>
+        <p style="color: #666; margin-top: 0.5rem;">Free soil testing and nutrient recommendations for better yields</p>
+        <div>
+          <span class="benefit"><i class="fas fa-flask"></i> Free Testing</span>
+          <span class="benefit"><i class="fas fa-chart-line"></i> Yield Improvement</span>
+        </div>
+        <p style="color: #9b59b6; font-weight: 600; margin-top: 1rem; cursor: pointer;">View Details →</p>
+      </div>
+
+      <div class="scheme-card">
+        <h4><i class="fas fa-money-bill-wave"></i> Kisan Credit Card (KCC)</h4>
+        <p style="color: #666; margin-top: 0.5rem;">Easy agricultural loans at minimal interest rates</p>
+        <div>
+          <span class="benefit"><i class="fas fa-credit-card"></i> Easy Loans</span>
+          <span class="benefit"><i class="fas fa-percent"></i> 2% Interest</span>
+        </div>
+        <p style="color: #9b59b6; font-weight: 600; margin-top: 1rem; cursor: pointer;">View Details →</p>
+      </div>
+    </div>
+
+    <!-- Sample Scheme Details -->
+    <div class="demo-section">
+      <h2 style="color: #333; margin-bottom: 1.5rem;"><i class="fas fa-info-circle"></i> Scheme Details Example</h2>
+      
+      <div style="border: 2px solid #9b59b6; padding: 1.5rem; border-radius: 8px;">
+        <h3 style="color: #9b59b6; margin-top: 0;">Pradhan Mantri Kisan Samman Nidhi (PM-KISAN)</h3>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin: 1.5rem 0;">
+          <div>
+            <h4 style="color: #9b59b6;">Benefits</h4>
+            <ul style="color: #666; padding-left: 1.5rem;">
+              <li>₹6,000 per year to all eligible farmers</li>
+              <li>Distributed in 3 installments of ₹2,000</li>
+              <li>Direct transfer to bank account</li>
+              <li>No hidden charges or paperwork</li>
+            </ul>
+          </div>
+          <div>
+            <h4 style="color: #9b59b6;">Requirements</h4>
+            <ul style="color: #666; padding-left: 1.5rem;">
+              <li>Indian farmer (citizen)</li>
+              <li>Age above 18 years</li>
+              <li>Active bank account</li>
+              <li>Valid Aadhar/ID proof</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="eligibility">
+          <strong style="color: #9b59b6;"><i class="fas fa-check-circle"></i> Eligibility Check</strong>
+          <p style="color: #666; margin: 0.5rem 0 0 0;">You likely qualify if you are a farmer with land records in your name or as co-owner.</p>
+        </div>
+
+        <h4 style="color: #9b59b6; margin-top: 1.5rem;">How to Apply</h4>
+        <ol class="application-process">
+          <li>Visit your nearest agricultural office or Common Service Center</li>
+          <li>Submit your Aadhar number and bank details</li>
+          <li>Verify your land records</li>
+          <li>Receive confirmation SMS on your registered phone</li>
+          <li>Get ₹2,000 within 2-3 weeks in your bank account</li>
+        </ol>
+      </div>
+    </div>
+
+    <!-- Key Features -->
+    <div class="demo-section">
+      <h3 style="color: #9b59b6; margin-bottom: 1rem;"><i class="fas fa-star"></i> Key Features of Scheme Finder</h3>
+      <ul class="features-list">
+        <li><i class="fas fa-check-circle"></i> Browse 100+ active government schemes</li>
+        <li><i class="fas fa-check-circle"></i> Eligibility checker for each scheme</li>
+        <li><i class="fas fa-check-circle"></i> Detailed benefit and requirement information</li>
+        <li><i class="fas fa-check-circle"></i> Application process and documents needed</li>
+        <li><i class="fas fa-check-circle"></i> Application deadline tracker</li>
+        <li><i class="fas fa-check-circle"></i> Direct links to official scheme portals</li>
+      </ul>
+    </div>
+
+    <!-- Benefits -->
+    <div class="demo-section">
+      <h3 style="color: #9b59b6; margin-bottom: 1rem;"><i class="fas fa-gift"></i> Why Use Our Scheme Finder</h3>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem;">
+        <div style="padding: 1rem; background: linear-gradient(135deg, rgba(155, 89, 182, 0.1) 0%, rgba(142, 68, 173, 0.1) 100%); border-radius: 8px;">
+          <h4 style="color: #9b59b6; margin-top: 0;"><i class="fas fa-check"></i> Easy Discovery</h4>
+          <p style="color: #666;">Find all applicable schemes in one place, no need to search government websites</p>
+        </div>
+        <div style="padding: 1rem; background: linear-gradient(135deg, rgba(155, 89, 182, 0.1) 0%, rgba(142, 68, 173, 0.1) 100%); border-radius: 8px;">
+          <h4 style="color: #9b59b6; margin-top: 0;"><i class="fas fa-check"></i> Save Money</h4>
+          <p style="color: #666;">Unlock subsidies, loans, and benefits worth thousands of rupees</p>
+        </div>
+        <div style="padding: 1rem; background: linear-gradient(135deg, rgba(155, 89, 182, 0.1) 0%, rgba(142, 68, 173, 0.1) 100%); border-radius: 8px;">
+          <h4 style="color: #9b59b6; margin-top: 0;"><i class="fas fa-check"></i> Simple Process</h4>
+          <p style="color: #666;">Step-by-step guides make application process easy and transparent</p>
+        </div>
+        <div style="padding: 1rem; background: linear-gradient(135deg, rgba(155, 89, 182, 0.1) 0%, rgba(142, 68, 173, 0.1) 100%); border-radius: 8px;">
+          <h4 style="color: #9b59b6; margin-top: 0;"><i class="fas fa-check"></i> Updated Info</h4>
+          <p style="color: #666;">Always current with latest schemes, deadlines, and requirement changes</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Login Section -->
+    <div class="login-section">
+      <h2><i class="fas fa-lock"></i> Unlock Government Benefits Now!</h2>
+      <p style="margin-bottom: 1.5rem;">Login or register to access the complete scheme finder and discover benefits you're eligible for.</p>
+      <a href="login-enhanced.html" class="login-btn">
+        <i class="fas fa-sign-in-alt"></i> Login Now
+      </a>
+      <p style="margin-top: 1rem;">Don't have an account? <a href="register-enhanced.html" style="color: white; text-decoration: underline;">Register here</a></p>
+    </div>
+
+    <!-- Footer -->
+    <div style="text-align: center; padding: 2rem 0; border-top: 1px solid #eee; margin-top: 2rem;">
+      <a href="../index.html" class="back-btn">
+        <i class="fas fa-arrow-left"></i> Back to Home
+      </a>
+    </div>
+  </div>
+</body>
+</html>
