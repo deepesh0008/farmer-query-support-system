@@ -175,7 +175,7 @@
         </a>
         <span id="navAuthLinks" style="display: flex; gap: 1.5rem; align-items: center;">
           <a href="pages/login-enhanced.html" class="nav-link"
-            style="text-decoration: none; color: white; font-weight: 600; transition: all 0.3s; font-size: 0.95rem;"
+            style="text-decoration: none; color: rgb(44, 112, 64); font-weight: 600; transition: all 0.3s; font-size: 0.95rem;"
             onmouseover="this.style.opacity='0.8';" onmouseout="this.style.opacity='1';">
             Login
           </a>
@@ -212,13 +212,8 @@
             style="cursor: pointer; background: #eef9f3; border-radius: 16px; padding: 0.75rem 1.4rem; box-shadow: 0 8px 22px rgba(0,0,0,0.12); display: flex; align-items: center; gap: 0.8rem; border: 1.5px solid rgba(255, 255, 255, 0.7); transition: all 0.3s ease;"
             onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 12px 26px rgba(0,0,0,0.18)';"
             onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 8px 22px rgba(0,0,0,0.12)';">
-            <div
-              style="width: 44px; height: 44px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 3px 6px rgba(23, 158, 102, 0.1); transition: background 0.25s;"
-              onmouseover="this.style.background='#f0fbf5';" onmouseout="this.style.background='white';">
-              <i class="fas fa-microphone" style="font-size: 1.3rem; color: #179e66;"></i>
-            </div>
-            <span style="font-size: 0.95rem; font-weight: 800; color: #179e66; font-family: 'Outfit', sans-serif;">Voice
-              Query</span>
+            <i class="fas fa-microphone" style="font-size: 1.3rem; color: #179e66;"></i>
+            <span style="font-size: 0.95rem; font-weight: 800; color: #179e66; font-family: 'Outfit', sans-serif;">Voice Query</span>
           </div>
 
           <!-- Upload Photo Card (Small) -->
@@ -226,14 +221,8 @@
             style="cursor: pointer; background: #eef9f3; border-radius: 16px; padding: 0.75rem 1.4rem; box-shadow: 0 8px 22px rgba(0,0,0,0.12); display: flex; align-items: center; gap: 0.8rem; border: 1.5px solid rgba(255, 255, 255, 0.7); transition: all 0.3s ease;"
             onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 12px 26px rgba(0,0,0,0.18)';"
             onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 8px 22px rgba(0,0,0,0.12)';">
-            <div
-              style="width: 44px; height: 44px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 3px 6px rgba(23, 158, 102, 0.1); transition: background 0.25s;"
-              onmouseover="this.style.background='#f0fbf5';" onmouseout="this.style.background='white';">
-              <i class="fas fa-camera" style="font-size: 1.3rem; color: #179e66;"></i>
-            </div>
-            <span
-              style="font-size: 0.95rem; font-weight: 800; color: #179e66; font-family: 'Outfit', sans-serif;">Upload
-              Photo</span>
+            <i class="fas fa-camera" style="font-size: 1.3rem; color: #179e66;"></i>
+            <span style="font-size: 0.95rem; font-weight: 800; color: #179e66; font-family: 'Outfit', sans-serif;">Upload Photo</span>
           </div>
 
         </div>
@@ -798,12 +787,19 @@
       }
 
       const userStr = localStorage.getItem('user');
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('token') || localStorage.getItem('accessToken');
       if (userStr && token) {
         try {
           const user = JSON.parse(userStr);
           const navAuthLinks = document.getElementById('navAuthLinks');
-          if (navAuthLinks && user && user.role) {
+          if (navAuthLinks && user) {
+            const profile = user.profile || {};
+            const firstName = profile.firstName || 'User';
+            const lastName = profile.lastName || '';
+            const fullName = `${firstName} ${lastName}`.trim() || 'Farmer User';
+            const email = user.email || 'farmer@email.com';
+            const initials = ((profile.firstName?.[0] || 'F') + (profile.lastName?.[0] || 'U')).toUpperCase();
+
             let dashboardUrl = 'pages/farmer-dashboard-enhanced.html';
             if (user.role === 'officer') {
               dashboardUrl = 'pages/officer-dashboard.html';
@@ -812,17 +808,56 @@
             }
 
             navAuthLinks.innerHTML = `
-              <a href="${dashboardUrl}" class="nav-link btn btn-primary" style="padding: 0.6rem 1.2rem; border-radius: 6px; font-weight: 600; display: flex; align-items: center; gap: 0.5rem; color: white !important; text-decoration: none;">
-                <i class="fas fa-columns"></i> Dashboard
-              </a>
-              <a href="#" onclick="logoutUser(); return false;" class="nav-link" style="text-decoration: none; color: #e74c3c; font-weight: 600; transition: color 0.3s; cursor: pointer;">
-                Logout
-              </a>
+              <div class="navbar-menu" style="position: relative; overflow: visible; display: flex; align-items: center; margin: 0; padding: 0;">
+                <!-- GitHub-style Circular Avatar Button -->
+                <div id="profileDropdownBtn" style="width: 38px; height: 38px; border-radius: 50%; background: white; color: #179e66; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1rem; border: 2px solid rgba(255,255,255,0.3); cursor: pointer; transition: all 0.25s; user-select: none; box-shadow: 0 2px 8px rgba(0,0,0,0.15);" onclick="toggleIndexProfileDropdown(event)" onmouseover="this.style.transform='scale(1.05)'; this.style.borderColor='rgba(255,255,255,0.9)';" onmouseout="this.style.transform='scale(1)'; this.style.borderColor='rgba(255,255,255,0.3)';">
+                  <span id="navAvatar">${initials}</span>
+                </div>
+                
+                <!-- GitHub-style Dropdown Card -->
+                <div id="profileDropdownCard" style="display: none; position: absolute; top: 46px; right: 0; background: white; border-radius: 8px; min-width: 200px; box-shadow: 0 8px 24px rgba(0,0,0,0.15); border: 1px solid #d0d7de; padding: 0.5rem 0; z-index: 3000; flex-direction: column; gap: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif; line-height: 1.4;">
+                  <!-- User Info Header -->
+                  <div style="padding: 0.5rem 1rem; text-align: left; overflow: hidden; display: flex; flex-direction: column; border-bottom: 1px solid #d0d7de; margin-bottom: 0.3rem;">
+                    <span style="font-size: 0.8rem; color: #57606a; font-weight: 400; display: block;">Signed in as</span>
+                    <span id="dropdownFullName" style="font-weight: 600; color: #24292f; font-size: 0.9rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-top: 0.1rem; display: block;">${fullName}</span>
+                    <span id="dropdownEmail" style="font-size: 0.78rem; color: #57606a; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-top: 0.05rem; display: block;">${email}</span>
+                  </div>
+                  
+                  <!-- Dropdown Navigation Links -->
+                  <a href="${dashboardUrl}" style="display: flex; align-items: center; gap: 0.6rem; padding: 0.4rem 1rem; color: #24292f; text-decoration: none; font-size: 0.88rem; font-weight: 400; transition: background 0.15s; text-align: left;" onmouseover="this.style.background='#f6f8fa'" onmouseout="this.style.background='transparent'">
+                    <i class="fas fa-th-large" style="color: #57606a; font-size: 0.85rem; width: 16px; text-align: center;"></i> Your Dashboard
+                  </a>
+                  
+                  <!-- Divider -->
+                  <div style="height: 1px; background-color: #d0d7de; margin: 0.3rem 0;"></div>
+                  
+                  <!-- Logout Option -->
+                  <a href="#" onclick="logoutUser(); return false;" style="display: flex; align-items: center; gap: 0.6rem; padding: 0.4rem 1rem; color: #cf222e; text-decoration: none; font-size: 0.88rem; font-weight: 500; transition: background 0.15s; text-align: left;" onmouseover="this.style.background='#ffebe9'" onmouseout="this.style.background='transparent'">
+                    <i class="fas fa-sign-out-alt" style="font-size: 0.85rem; width: 16px; text-align: center;"></i> Sign out
+                  </a>
+                </div>
+              </div>
             `;
           }
         } catch (e) {
           console.error(e);
         }
+      }
+    });
+
+    window.toggleIndexProfileDropdown = function (event) {
+      if (event) event.stopPropagation();
+      const card = document.getElementById('profileDropdownCard');
+      if (card) {
+        card.style.display = card.style.display === 'flex' ? 'none' : 'flex';
+      }
+    };
+
+    window.addEventListener('click', (e) => {
+      const card = document.getElementById('profileDropdownCard');
+      const btn = document.getElementById('profileDropdownBtn');
+      if (card && btn && !btn.contains(e.target) && !card.contains(e.target)) {
+        card.style.display = 'none';
       }
     });
 

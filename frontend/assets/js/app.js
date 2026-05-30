@@ -49,6 +49,15 @@ class FarmerApp {
     document.querySelectorAll('[data-search]').forEach(input => {
       input.addEventListener('input', (e) => this.handleSearch(e));
     });
+
+    // Global window click to close profile dropdown
+    window.addEventListener('click', (e) => {
+      const card = document.getElementById('profileDropdownCard');
+      const btn = document.getElementById('profileDropdownBtn');
+      if (card && btn && !btn.contains(e.target) && !card.contains(e.target)) {
+        card.style.display = 'none';
+      }
+    });
   }
 
   async loadUserData() {
@@ -65,10 +74,29 @@ class FarmerApp {
   }
 
   updateUserGreeting() {
-    const greeting = document.getElementById('userGreeting');
-    if (greeting && this.currentUser) {
-      const firstName = this.currentUser.profile?.firstName || 'User';
-      greeting.textContent = `👋 Welcome, ${firstName}!`;
+    if (this.currentUser) {
+      const profile = this.currentUser.profile || {};
+      const firstName = profile.firstName || 'User';
+      const lastName = profile.lastName || '';
+      const fullName = `${firstName} ${lastName}`.trim() || 'Farmer User';
+      const email = this.currentUser.email || 'farmer@email.com';
+      const initials = ((profile.firstName?.[0] || 'F') + (profile.lastName?.[0] || 'U')).toUpperCase();
+
+      // Update navbar greeting & avatar initials
+      const greeting = document.getElementById('userGreeting');
+      if (greeting) greeting.textContent = firstName;
+
+      const navAvatar = document.getElementById('navAvatar');
+      if (navAvatar) navAvatar.textContent = initials;
+
+      const dropdownAvatar = document.getElementById('dropdownAvatar');
+      if (dropdownAvatar) dropdownAvatar.textContent = initials;
+
+      const dropdownFullName = document.getElementById('dropdownFullName');
+      if (dropdownFullName) dropdownFullName.textContent = fullName;
+
+      const dropdownEmail = document.getElementById('dropdownEmail');
+      if (dropdownEmail) dropdownEmail.textContent = email;
     }
   }
 
@@ -1233,6 +1261,19 @@ class FarmerApp {
       console.error('Expert chat API failed:', error);
       this.appendExpertChatMessage('expert', 'I apologize, I am temporarily having trouble connecting. Let me check the connection and try again shortly!');
     }
+  }
+
+  toggleProfileDropdown(event) {
+    if (event) event.stopPropagation();
+    const card = document.getElementById('profileDropdownCard');
+    if (!card) return;
+    card.style.display = card.style.display === 'flex' ? 'none' : 'flex';
+  }
+
+  handleDashboardLink() {
+    const card = document.getElementById('profileDropdownCard');
+    if (card) card.style.display = 'none';
+    this.switchTab('submit');
   }
 }
 

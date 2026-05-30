@@ -17,11 +17,34 @@
           <h1><i class="fas fa-leaf"></i> Farmer Query Support</h1>
         </a>
       </div>
-      <div class="navbar-menu">
-        <span id="userGreeting">👋 Welcome!</span>
-        <a href="javascript:logout()" class="nav-link">
-          <i class="fas fa-sign-out-alt"></i> Logout
-        </a>
+      <div class="navbar-menu" style="position: relative; overflow: visible; display: flex; align-items: center;">
+        <!-- GitHub-style Circular Avatar Button -->
+        <div id="profileDropdownBtn" style="width: 38px; height: 38px; border-radius: 50%; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1rem; border: 2px solid rgba(255,255,255,0.2); cursor: pointer; transition: all 0.25s; user-select: none; box-shadow: 0 2px 8px rgba(0,0,0,0.15);" onclick="app?.toggleProfileDropdown(event)" onmouseover="this.style.transform='scale(1.05)'; this.style.borderColor='rgba(255,255,255,0.6)';" onmouseout="this.style.transform='scale(1)'; this.style.borderColor='rgba(255,255,255,0.2)';" title="User Account Menu">
+          <span id="navAvatar">F</span>
+        </div>
+        
+        <!-- GitHub-style Dropdown Card -->
+        <div id="profileDropdownCard" style="display: none; position: absolute; top: 50px; right: 0; background: white; border-radius: 8px; min-width: 200px; box-shadow: 0 8px 24px rgba(149,157,165,0.2); border: 1px solid #d0d7de; padding: 0.5rem 0; z-index: 3000; animation: confirmZoomIn 0.15s cubic-bezier(0.16, 1, 0.3, 1); flex-direction: column; gap: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;">
+          <!-- User Info Header -->
+          <div style="padding: 0.5rem 1rem; text-align: left; overflow: hidden; display: flex; flex-direction: column; border-bottom: 1px solid #d0d7de; margin-bottom: 0.3rem;">
+            <span style="font-size: 0.8rem; color: #57606a; font-weight: 400;">Signed in as</span>
+            <span id="dropdownFullName" style="font-weight: 600; color: #24292f; font-size: 0.9rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-top: 0.1rem;">Farmer User</span>
+            <span id="dropdownEmail" style="font-size: 0.78rem; color: #57606a; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-top: 0.05rem;">farmer@email.com</span>
+          </div>
+          
+          <!-- Dropdown Navigation Links -->
+          <a href="javascript:void(0)" onclick="app?.handleDashboardLink()" style="display: flex; align-items: center; gap: 0.6rem; padding: 0.4rem 1rem; color: #24292f; text-decoration: none; font-size: 0.88rem; font-weight: 400; transition: background 0.15s; text-align: left;" onmouseover="this.style.background='#f6f8fa'" onmouseout="this.style.background='transparent'">
+            <i class="fas fa-th-large" style="color: #57606a; font-size: 0.85rem; width: 16px; text-align: center;"></i> Your Dashboard
+          </a>
+          
+          <!-- Divider -->
+          <div style="height: 1px; background-color: #d0d7de; margin: 0.3rem 0;"></div>
+          
+          <!-- Logout Option -->
+          <a href="javascript:logout()" style="display: flex; align-items: center; gap: 0.6rem; padding: 0.4rem 1rem; color: #cf222e; text-decoration: none; font-size: 0.88rem; font-weight: 500; transition: background 0.15s; text-align: left;" onmouseover="this.style.background='#ffebe9'" onmouseout="this.style.background='transparent'">
+            <i class="fas fa-sign-out-alt" style="font-size: 0.85rem; width: 16px; text-align: center;"></i> Sign out
+          </a>
+        </div>
       </div>
     </div>
   </nav>
