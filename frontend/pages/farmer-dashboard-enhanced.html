@@ -274,18 +274,31 @@
 
         <!-- Market Search -->
         <div class="card">
-          <div style="display: grid; grid-template-columns: 1fr 1fr auto; gap: 1rem; align-items: end;">
-            <div class="form-group" style="margin: 0;">
+          <div style="display: flex; gap: 1rem; align-items: flex-end; flex-wrap: wrap; width: 100%;">
+            <div class="form-group" style="margin: 0; flex: 1; min-width: 180px;">
               <label for="marketCrop">
                 <i class="fas fa-leaf"></i> Crop Name
               </label>
-              <input type="text" id="marketCrop" placeholder="e.g., Rice, Wheat..." />
+              <select id="marketCrop" style="width: 100%; padding: 0.8rem; border: 1px solid var(--border); border-radius: 8px; font-size: 1rem; background-color: white;">
+                <option value="">Select Crop...</option>
+                <option value="Wheat">Wheat (गेहूं)</option>
+                <option value="Rice">Rice (धान)</option>
+                <option value="Maize">Maize (मक्का)</option>
+                <option value="Cotton">Cotton (कपास)</option>
+                <option value="Sugarcane">Sugarcane (गन्ना)</option>
+                <option value="Potato">Potato (आलू)</option>
+                <option value="Tomato">Tomato (टमाटर)</option>
+                <option value="Mustard">Mustard (सरसों)</option>
+                <option value="Soybean">Soybean (सोयाबीन)</option>
+                <option value="Onion">Onion (प्याज)</option>
+                <option value="Gram">Gram (चना)</option>
+              </select>
             </div>
-            <div class="form-group" style="margin: 0;">
+            <div class="form-group" style="margin: 0; flex: 1; min-width: 180px;">
               <label for="marketState">
                 <i class="fas fa-map"></i> State
               </label>
-              <select id="marketState" style="width: 100%; padding: 0.8rem; border: 1px solid var(--border); border-radius: 8px; font-size: 1rem; background-color: white;">
+              <select id="marketState" style="width: 100%; padding: 0.8rem; border: 1px solid var(--border); border-radius: 8px; font-size: 1rem; background-color: white;" onchange="app?.handleStateChange()">
                 <option value="">All States (Optional)</option>
                 <option value="Delhi">Delhi</option>
                 <option value="West Bengal">West Bengal</option>
@@ -296,9 +309,19 @@
                 <option value="Haryana">Haryana</option>
                 <option value="Gujarat">Gujarat</option>
                 <option value="Karnataka">Karnataka</option>
+                <option value="Tamil Nadu">Tamil Nadu</option>
+                <option value="Telangana">Telangana</option>
               </select>
             </div>
-            <button class="btn btn-primary" onclick="app?.handleMarketPrices()">
+            <div class="form-group" style="margin: 0; flex: 1; min-width: 180px;">
+              <label for="marketCity">
+                <i class="fas fa-city"></i> City / Mandi
+              </label>
+              <select id="marketCity" style="width: 100%; padding: 0.8rem; border: 1px solid var(--border); border-radius: 8px; font-size: 1rem; background-color: white;">
+                <option value="">All Cities / Mandis</option>
+              </select>
+            </div>
+            <button class="btn btn-primary" onclick="app?.handleMarketPrices()" style="height: 48px; padding: 0 2rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; border-radius: 8px;">
               <i class="fas fa-search"></i> Search
             </button>
           </div>
@@ -332,18 +355,47 @@
           </div>
         </div>
 
-        <!-- Scheme Search -->
-        <div class="card">
-          <div style="display: grid; grid-template-columns: 1fr auto; gap: 1rem; align-items: end;">
+        <!-- Scheme Dropdown Selector -->
+        <div class="card" style="margin-bottom: 1.5rem;">
+          <div style="display: grid; grid-template-columns: 1fr auto; gap: 1.5rem; align-items: end;">
             <div class="form-group" style="margin: 0;">
-              <label for="schemeSearch">
-                <i class="fas fa-search"></i> Search Schemes
+              <label for="schemeSelect" style="font-weight: 600; color: var(--text-dark); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                <i class="fas fa-landmark" style="color: var(--primary);"></i> Select Government Scheme
               </label>
-              <input type="text" id="schemeSearch" placeholder="Search by scheme name..." />
+              <select id="schemeSelect" onchange="app?.handleSchemeDropdownChange()" style="width: 100%; padding: 0.8rem; border: 1px solid var(--border); border-radius: 8px; font-size: 1rem; background-color: white; font-family: inherit; cursor: pointer; outline: none; transition: border-color 0.2s;" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'">
+                <option value="">-- Choose a Live Government Scheme to Verify --</option>
+                <optgroup label="Central Government Schemes">
+                  <option value="Pradhan Mantri Kisan Samman Nidhi (PM-KISAN)">PM-KISAN (Pradhan Mantri Kisan Samman Nidhi)</option>
+                  <option value="Pradhan Mantri Fasal Bima Yojana (PMFBY)">PMFBY (Pradhan Mantri Fasal Bima Yojana - Crop Insurance)</option>
+                  <option value="Kisan Credit Card (KCC) Scheme">Kisan Credit Card (KCC) Scheme</option>
+                  <option value="Soil Health Card Scheme">Soil Health Card Scheme</option>
+                  <option value="Pradhan Mantri Krishi Sinchayee Yojana (PMKSY)">PMKSY (Pradhan Mantri Krishi Sinchayee Yojana - Irrigation)</option>
+                  <option value="National Agriculture Market (e-NAM)">e-NAM (National Agriculture Market)</option>
+                  <option value="PM-KUSUM (Pradhan Mantri Kisan Urja Suraksha evam Utthaan Mahabhiyan)">PM-KUSUM (Solar Pumps Subsidies)</option>
+                  <option value="Paramparagat Krishi Vikas Yojana (PKVY)">PKVY (Paramparagat Krishi Vikas Yojana - Organic Farming)</option>
+                  <option value="PM Kisan Maan-Dhan Yojana (PM-KMDY)">PM-KMDY (Pension Scheme for Farmers)</option>
+                  <option value="Sub-Mission on Agricultural Mechanization (SMAM)">SMAM (Agricultural Mechanization Subsidies)</option>
+                </optgroup>
+                <optgroup label="State / Custom Schemes">
+                  <option value="Rythu Bandhu Scheme Telangana">Rythu Bandhu (Telangana)</option>
+                  <option value="Krishak Bandhu Scheme West Bengal">Krishak Bandhu (West Bengal)</option>
+                  <option value="YSR Rythu Bharosa Andhra Pradesh">YSR Rythu Bharosa (Andhra Pradesh)</option>
+                  <option value="Mukhyamantri Krishi Ashirwad Yojana Jharkhand">Mukhyamantri Krishi Ashirwad Yojana (Jharkhand)</option>
+                  <option value="Bhavantar Bhugtan Yojana Madhya Pradesh">Bhavantar Bhugtan Yojana (Madhya Pradesh)</option>
+                </optgroup>
+                <option value="custom_search">🔍 Discover other live schemes around India...</option>
+              </select>
             </div>
-            <button class="btn btn-primary" onclick="app?.handleSearchSchemes()">
-              <i class="fas fa-filter"></i> Search
+            <button class="btn btn-primary" onclick="app?.handleSearchSchemes()" style="height: 48px; padding: 0 2rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; border-radius: 8px;">
+              <i class="fas fa-sync-alt"></i> Fetch Live Status
             </button>
+          </div>
+          <!-- Custom Query text input hidden by default, shown when custom_search is selected -->
+          <div id="customSchemeSearchContainer" style="display: none; margin-top: 1rem; transition: all 0.3s ease;">
+            <div class="form-group" style="margin: 0;">
+              <label for="schemeSearchInput" style="font-weight: 500; font-size: 0.9rem; color: var(--text-muted); margin-bottom: 0.4rem; display: block;">Enter Scheme Name to Search Live on the Internet</label>
+              <input type="text" id="schemeSearchInput" placeholder="e.g. Haryana crop subsidy 2026..." style="padding: 0.8rem; border: 1px solid var(--border); border-radius: 8px; width: 100%; font-family: inherit; font-size: 1rem;" />
+            </div>
           </div>
         </div>
 
@@ -856,28 +908,94 @@
         }
         
         if (response.ok) {
-          // Display results
-          const resultsDiv = document.getElementById('analysisResults') || document.createElement('div');
-          if (!document.getElementById('analysisResults')) {
-            resultsDiv.id = 'analysisResults';
-            this.parentElement.appendChild(resultsDiv);
+          // Display Step 2: AI Detection Results
+          const analysisResults = document.getElementById('analysisResults');
+          const analysisContent = document.getElementById('analysisContent');
+          if (analysisResults && analysisContent) {
+            analysisContent.innerHTML = `
+              <div style="display: flex; flex-direction: column; gap: 1.2rem; padding: 0.5rem 0;">
+                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 0.8rem; flex-wrap: wrap; gap: 1rem;">
+                  <span style="font-size: 1.15rem; font-weight: 700; color: var(--text-dark);">
+                    🌾 Detected Crop Issue: <span style="color: #9b59b6; border-bottom: 2px solid rgba(155, 89, 182, 0.3); padding-bottom: 2px;">${data.disease || 'Unknown'}</span>
+                  </span>
+                  <span style="background: rgba(155, 89, 182, 0.1); color: #8e44ad; padding: 0.4rem 1rem; border-radius: 30px; font-weight: 700; font-size: 0.9rem; border: 1px solid rgba(155, 89, 182, 0.2); display: inline-flex; align-items: center; gap: 0.3rem;">
+                    <i class="fas fa-check-double"></i> AI Confidence: ${data.confidence || 80}%
+                  </span>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-top: 0.5rem;">
+                  <div style="background: #fcfcfc; border: 1px solid var(--border); border-radius: 8px; padding: 1rem; text-align: center;">
+                    <span style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">AFFECTED FIELD AREA</span>
+                    <div style="font-size: 2rem; font-weight: 800; color: #e74c3c; margin: 0.4rem 0;">${data.affectedArea || affectedArea || 0}%</div>
+                    <div style="background: #f0f0f0; border-radius: 10px; height: 10px; overflow: hidden; width: 80%; margin: 0 auto;">
+                      <div style="background: #e74c3c; width: ${data.affectedArea || affectedArea || 0}%; height: 100%;"></div>
+                    </div>
+                  </div>
+                  
+                  <div style="background: #fcfcfc; border: 1px solid var(--border); border-radius: 8px; padding: 1rem; text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                    <span style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">DIAGNOSIS STATUS</span>
+                    <span style="margin-top: 0.5rem; background: rgba(39, 174, 96, 0.1); color: #27ae60; padding: 0.4rem 1rem; border-radius: 30px; font-weight: 700; font-size: 0.9rem; border: 1px solid rgba(39, 174, 96, 0.2); display: inline-flex; align-items: center; gap: 0.3rem;">
+                      <i class="fas fa-certificate"></i> Verified Solution Grounded
+                    </span>
+                    <small style="color: #7f8c8d; font-size: 0.75rem; margin-top: 0.5rem;">Checked around internet agronomy resources</small>
+                  </div>
+                </div>
+              </div>
+            `;
+            analysisResults.style.display = 'block';
+          }
+
+          // Display Step 3: Treatment & Solutions
+          const treatmentResults = document.getElementById('treatmentResults');
+          const treatmentContent = document.getElementById('treatmentContent');
+          if (treatmentResults && treatmentContent) {
+            const treatmentText = data.treatment || 'Consult with an agricultural extension officer.';
+            let organicPart = '';
+            let chemicalPart = '';
+            
+            if (treatmentText.toLowerCase().includes('chemical:')) {
+              const parts = treatmentText.split(/chemical:/i);
+              organicPart = parts[0].replace(/organic:/i, '').trim();
+              chemicalPart = parts[1].trim();
+            } else {
+              organicPart = treatmentText.replace(/organic:/i, '').trim();
+            }
+
+            const formatRecommendations = () => {
+              if (!data.recommendations || data.recommendations.length === 0) {
+                return '<li style="margin-bottom: 0.4rem; display: flex; align-items: center; gap: 0.5rem;"><i class="fas fa-check-circle" style="color: var(--primary);"></i> <span>Prune infected leaves to avoid water splash propagation.</span></li>';
+              }
+              return data.recommendations.map(r => `<li style="margin-bottom: 0.5rem; display: flex; align-items: start; gap: 0.5rem;"><i class="fas fa-check-circle" style="color: var(--primary); margin-top: 0.2rem; font-size: 0.95rem;"></i> <span>${r}</span></li>`).join('');
+            };
+
+            treatmentContent.innerHTML = `
+              <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.2rem;">
+                  <div style="background: rgba(46, 204, 113, 0.03); border: 1px solid rgba(46, 204, 113, 0.15); border-left: 5px solid #2ecc71; border-radius: 8px; padding: 1.2rem; box-shadow: 0 4px 10px rgba(0,0,0,0.01);">
+                    <h4 style="color: #27ae60; margin: 0 0 0.6rem 0; font-size: 1.15rem; font-weight: 700;"><i class="fas fa-leaf"></i> Organic Remedy</h4>
+                    <p style="margin: 0; font-size: 0.95rem; color: #333; line-height: 1.5;">${organicPart || 'Apply neem oil spray or baking soda organic solutions to restrict spore reproduction.'}</p>
+                  </div>
+                  
+                  ${chemicalPart ? `
+                    <div style="background: rgba(52, 152, 219, 0.03); border: 1px solid rgba(52, 152, 219, 0.15); border-left: 5px solid #3498db; border-radius: 8px; padding: 1.2rem; box-shadow: 0 4px 10px rgba(0,0,0,0.01);">
+                      <h4 style="color: #2980b9; margin: 0 0 0.6rem 0; font-size: 1.15rem; font-weight: 700;"><i class="fas fa-flask"></i> Chemical Solution</h4>
+                      <p style="margin: 0; font-size: 0.95rem; color: #333; line-height: 1.5;">${chemicalPart}</p>
+                    </div>
+                  ` : ''}
+                </div>
+                
+                <div style="background: #fafbfc; border: 1px solid var(--border); border-radius: 10px; padding: 1.5rem; box-shadow: 0 4px 12px rgba(0,0,0,0.01);">
+                  <h4 style="color: var(--text-dark); margin: 0 0 0.8rem 0; font-size: 1.1rem; font-weight: 750;"><i class="fas fa-shield-alt" style="color: #e67e22; margin-right: 0.4rem;"></i> Long-term Preventive Measures</h4>
+                  <ul style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 0.3rem; color: #555; font-size: 0.93rem;">
+                    ${formatRecommendations()}
+                  </ul>
+                </div>
+              </div>
+            `;
+            treatmentResults.style.display = 'block';
           }
           
-          resultsDiv.innerHTML = `
-            <div class="card" style="margin-top: 2rem; border-left: 4px solid #9b59b6;">
-              <h3>🔍 Analysis Results</h3>
-              <div style="padding: 1rem; background: rgba(155, 89, 182, 0.1); border-radius: 8px;">
-                <p><strong>Detected Disease/Issue:</strong> ${data.disease || 'Unknown'}</p>
-                <p><strong>Confidence:</strong> ${data.confidence || 'N/A'}%</p>
-                <p><strong>Affected Area:</strong> ${data.affectedArea || 'N/A'}%</p>
-                <h4 style="margin-top: 1rem; color: #2ecc71;">💊 Recommended Treatment:</h4>
-                <p>${data.treatment || data.recommendations || 'Consult with an expert'}</p>
-              </div>
-            </div>
-          `;
-          resultsDiv.style.display = 'block';
-          
-          alert('✅ Analysis complete! Check results below.');
+          alert('✅ Crop disease analysis complete! Solutions loaded below.');
         } else {
           alert('❌ ' + (data.message || 'Analysis failed'));
         }

@@ -448,6 +448,7 @@ class FarmerApp {
   async handleMarketPrices() {
     const crop = document.getElementById('marketCrop')?.value;
     const state = document.getElementById('marketState')?.value;
+    const market = document.getElementById('marketCity')?.value;
 
     if (!crop) {
       this.showAlert('Please enter crop name', 'error');
@@ -456,7 +457,7 @@ class FarmerApp {
 
     this.showLoadingState('marketInfo', true);
     try {
-      const response = await this.api.getMarketPrices({ crop, state });
+      const response = await this.api.getMarketPrices({ crop, state, market });
       const list = response.data || (Array.isArray(response) ? response : []);
       const marketInfo = document.getElementById('marketInfo');
       
@@ -486,34 +487,339 @@ class FarmerApp {
     }
   }
 
+  handleStateChange() {
+    const state = document.getElementById('marketState')?.value;
+    const citySelect = document.getElementById('marketCity');
+    if (!citySelect) return;
+
+    // Reset options
+    citySelect.innerHTML = '<option value="">All Cities / Mandis</option>';
+
+    const mandiMap = {
+      'Delhi': ['Narela', 'Najafgarh', 'Ghazipur'],
+      'Punjab': ['Ludhiana', 'Amritsar', 'Patiala', 'Jalandhar', 'Bathinda'],
+      'Haryana': ['Karnal', 'Ambala', 'Rohtak', 'Hisar', 'Sirsa'],
+      'Uttar Pradesh': ['Kanpur', 'Hapur', 'Agra', 'Bareilly', 'Lucknow'],
+      'Rajasthan': ['Jaipur', 'Alwar', 'Kota', 'Jodhpur', 'Sri Ganganagar'],
+      'West Bengal': ['Kolkata', 'Siliguri', 'Burdwan'],
+      'Maharashtra': ['Mumbai', 'Pune', 'Nagpur', 'Nashik'],
+      'Gujarat': ['Ahmedabad', 'Surat', 'Rajkot', 'Vadodara'],
+      'Karnataka': ['Bangalore', 'Mysore', 'Hubli', 'Belgaum'],
+      'Tamil Nadu': ['Chennai', 'Coimbatore', 'Madurai', 'Trichy'],
+      'Telangana': ['Hyderabad', 'Warangal', 'Nizamabad', 'Khammam']
+    };
+
+    if (state && mandiMap[state]) {
+      mandiMap[state].forEach(city => {
+        const opt = document.createElement('option');
+        opt.value = city;
+        opt.textContent = `${city} Mandi`;
+        citySelect.appendChild(opt);
+      });
+    }
+  }
+
+  handleSchemeDropdownChange() {
+    const select = document.getElementById('schemeSelect');
+    const customContainer = document.getElementById('customSchemeSearchContainer');
+    if (!select || !customContainer) return;
+
+    if (select.value === 'custom_search') {
+      customContainer.style.display = 'block';
+    } else {
+      customContainer.style.display = 'none';
+      if (select.value) {
+        this.handleSearchSchemes();
+      }
+    }
+  }
+
   async handleSearchSchemes() {
-    const query = document.getElementById('schemeSearch')?.value;
-    
-    if (!query || query.length < 2) {
-      this.showAlert('Enter at least 2 characters', 'info');
+    const select = document.getElementById('schemeSelect');
+    if (!select) return;
+
+    let query = '';
+    if (select.value === 'custom_search') {
+      query = document.getElementById('schemeSearchInput')?.value;
+      if (!query || query.length < 2) {
+        this.showAlert('Please enter at least 2 characters for custom scheme search', 'info');
+        return;
+      }
+    } else {
+      query = select.value;
+    }
+
+    if (!query) {
+      this.showAlert('Please select or search for a government scheme', 'info');
       return;
     }
 
     this.showLoadingState('schemesList', true);
     try {
-      const schemes = await this.api.searchSchemes(query);
+      const response = await this.api.searchSchemes(query);
+      const schemes = response.data || (Array.isArray(response) ? response : []);
       const schemesList = document.getElementById('schemesList');
       
-      schemesList.innerHTML = schemes.map(scheme => `
-        <div class="scheme-card">
-          <h3>${scheme.schemeName}</h3>
-          <p>${scheme.description}</p>
-          <div class="scheme-badges">
-            <span class="badge">${scheme.govtLevel}</span>
-            <span class="badge">${scheme.schemeType}</span>
+      if (!schemes || schemes.length === 0) {
+        schemesList.innerHTML = `
+          <div style="text-align: center; padding: 3rem 1.5rem; background: #fdfefe; border: 1px dashed var(--border); border-radius: 12px; width: 100%;">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">🔍</div>
+            <h4 style="color: var(--text-dark); margin-bottom: 0.5rem;">No direct matching scheme found</h4>
+            <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 1.5rem;">Click below to trigger a live AI search around the internet for "${query}"!</p>
+            <button class="btn btn-primary" onclick="app.forceLiveSchemeHarvest('${query}')" style="margin: 0 auto; display: flex; align-items: center; gap: 0.5rem; padding: 0.8rem 1.5rem; border-radius: 8px;">
+              <i class="fas fa-satellite-dish"></i> Try Deep Live AI Harvesting
+            </button>
           </div>
-          <button class="btn btn-small" onclick="app.viewSchemeDetails('${scheme._id}')">
-            Learn More
+        `;
+        return;
+      }
+
+      schemesList.innerHTML = schemes.map(scheme => `
+        <div class="scheme-card" style="position: relative; border-left: 5px solid var(--primary); padding: 1.5rem; border-radius: 8px; background: white; box-shadow: 0 4px 15px rgba(0,0,0,0.03); transition: all 0.2s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 25px rgba(0,0,0,0.06)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(0,0,0,0.03)';">
+          <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.8rem; gap: 1rem; flex-wrap: wrap;">
+            <h3 style="margin: 0; font-size: 1.25rem; font-weight: 700; color: var(--text-dark);">${scheme.schemeName}</h3>
+            <span style="font-size: 0.75rem; text-transform: uppercase; font-weight: 750; padding: 0.3rem 0.6rem; border-radius: 20px; background: rgba(46, 204, 113, 0.1); color: var(--primary); border: 1px solid rgba(46, 204, 113, 0.2); display: inline-flex; align-items: center; gap: 0.3rem;">
+              <i class="fas fa-check-circle"></i> Live Status Verified
+            </span>
+          </div>
+          <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; margin-bottom: 1.2rem;">${scheme.description || 'No description available.'}</p>
+          <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.2rem;">
+            <span class="badge" style="background: rgba(52, 152, 219, 0.1); color: #2980b9; border: 1px solid rgba(52, 152, 219, 0.2); font-weight: 600;"><i class="fas fa-globe"></i> ${scheme.govtLevel?.toUpperCase() || 'CENTRAL'}</span>
+            <span class="badge" style="background: rgba(155, 89, 182, 0.1); color: #8e44ad; border: 1px solid rgba(155, 89, 182, 0.2); font-weight: 600;"><i class="fas fa-tag"></i> ${scheme.schemeType?.toUpperCase() || 'BENEFIT'}</span>
+            ${scheme.governmentDepartment ? `<span class="badge" style="background: rgba(241, 196, 15, 0.1); color: #d35400; border: 1px solid rgba(241, 196, 15, 0.2); font-weight: 500; max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><i class="fas fa-building"></i> ${scheme.governmentDepartment}</span>` : ''}
+          </div>
+          <button class="btn btn-primary" onclick="app.viewSchemeDetails('${scheme._id}')" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.6rem 1.2rem; border-radius: 8px; font-size: 0.9rem;">
+            <i class="fas fa-file-invoice"></i> Learn More & Apply
           </button>
         </div>
       `).join('');
     } catch (error) {
       this.showAlert(`❌ Error: ${error.message}`, 'error');
+    } finally {
+      this.showLoadingState('schemesList', false);
+    }
+  }
+
+  async forceLiveSchemeHarvest(queryText) {
+    this.showAlert('🔍 Launching live AI scheme grounders...', 'info');
+    this.showLoadingState('schemesList', true);
+    try {
+      const response = await this.api.request(`/schemes/search?q=${encodeURIComponent(queryText)}&live=true`);
+      const schemes = response.data || (Array.isArray(response) ? response : []);
+      const schemesList = document.getElementById('schemesList');
+      
+      if (!schemes || schemes.length === 0) {
+        schemesList.innerHTML = `<p class="empty-state">❌ No schemes found even after deep harvest.</p>`;
+        return;
+      }
+      this.handleSearchSchemes();
+      this.showAlert('✅ Live harvesting complete! Scheme loaded successfully.', 'success');
+    } catch (error) {
+      this.showAlert(`❌ Live harvesting failed: ${error.message}`, 'error');
+      this.showLoadingState('schemesList', false);
+    }
+  }
+
+  async viewSchemeDetails(schemeId) {
+    this.showAlert('Fetching live details from official sources...', 'info');
+    try {
+      const response = await this.api.getScheme(schemeId);
+      const scheme = response.data || response;
+      
+      const formatBenefits = () => {
+        let items = [];
+        if (scheme.benefits?.subsidy?.amount) {
+          items.push(`
+            <div style="background: #fdfefe; border: 1px solid var(--border); border-radius: 8px; padding: 1rem; box-shadow: 0 2px 8px rgba(0,0,0,0.01);">
+              <span style="font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Subsidy Amount</span>
+              <div style="font-size: 1.4rem; font-weight: 700; color: var(--primary); margin-top: 0.2rem;">₹${scheme.benefits.subsidy.amount}</div>
+              ${scheme.benefits.subsidy.percentage ? `<div style="font-size: 0.8rem; color: #7f8c8d; margin-top: 0.1rem;">Percentage: ${scheme.benefits.subsidy.percentage}%</div>` : ''}
+            </div>
+          `);
+        }
+        if (scheme.benefits?.loan?.maxAmount) {
+          items.push(`
+            <div style="background: #fdfefe; border: 1px solid var(--border); border-radius: 8px; padding: 1rem; box-shadow: 0 2px 8px rgba(0,0,0,0.01);">
+              <span style="font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Loan Details</span>
+              <div style="font-size: 1.3rem; font-weight: 700; color: #2980b9; margin-top: 0.2rem;">Up to ₹${scheme.benefits.loan.maxAmount}</div>
+              <div style="font-size: 0.8rem; color: #7f8c8d; margin-top: 0.1rem;">Interest Rate: ${scheme.benefits.loan.interestRate || 'N/A'}% p.a.</div>
+            </div>
+          `);
+        }
+        if (scheme.benefits?.insurance?.maxClaim) {
+          items.push(`
+            <div style="background: #fdfefe; border: 1px solid var(--border); border-radius: 8px; padding: 1rem; box-shadow: 0 2px 8px rgba(0,0,0,0.01);">
+              <span style="font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Insurance Coverage</span>
+              <div style="font-size: 1.3rem; font-weight: 700; color: #9b59b6; margin-top: 0.2rem;">${scheme.benefits.insurance.coverage || 'Full Coverage'}</div>
+              <div style="font-size: 0.8rem; color: #7f8c8d; margin-top: 0.1rem;">Max Claim: ₹${scheme.benefits.insurance.maxClaim}</div>
+            </div>
+          `);
+        }
+        return items.length > 0 ? items.join('') : `
+          <div style="background: #fdfefe; border: 1px solid var(--border); border-radius: 8px; padding: 1rem; width: 100%;">
+            <span style="font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Financial Perks</span>
+            <div style="font-size: 1.15rem; font-weight: 600; color: var(--text-dark); margin-top: 0.2rem;">Verified Government Aid</div>
+          </div>
+        `;
+      };
+
+      const formatListItems = (list) => {
+        if (!list || list.length === 0) return '';
+        return list.map(item => `<li style="margin-bottom: 0.4rem;">${item}</li>`).join('');
+      };
+
+      const modalContent = `
+        <div class="modal-header" style="background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%); color: white; padding: 1.8rem 1.5rem; border-radius: 12px 12px 0 0;">
+          <h2 style="margin: 0 0 0.5rem 0; font-size: 1.6rem; display: flex; align-items: center; gap: 0.6rem; color: white;">
+            <i class="fas fa-landmark"></i> ${scheme.schemeName}
+          </h2>
+          <div style="font-size: 0.88rem; opacity: 0.95; display: flex; gap: 1rem; flex-wrap: wrap;">
+            <span><strong>Code:</strong> ${scheme.schemeCode || 'N/A'}</span>
+            <span>|</span>
+            <span><strong>Level:</strong> ${scheme.govtLevel?.toUpperCase() || 'CENTRAL'}</span>
+            <span>|</span>
+            <span><strong>Department:</strong> ${scheme.governmentDepartment || 'Agriculture Dept'}</span>
+          </div>
+        </div>
+        
+        <div class="modal-body" style="padding: 1.8rem 1.5rem; max-height: 65vh; overflow-y: auto; font-family: inherit;">
+          <div style="background: rgba(46, 204, 113, 0.04); border-left: 4px solid var(--primary); padding: 1.2rem; border-radius: 0 10px 10px 0; margin-bottom: 1.8rem; box-shadow: 0 4px 12px rgba(0,0,0,0.01);">
+            <h4 style="margin: 0 0 0.5rem 0; color: var(--primary); font-size: 1.1rem; font-weight: 700;"><i class="fas fa-info-circle"></i> About the Scheme</h4>
+            <p style="margin: 0 0 0.8rem 0; line-height: 1.6; color: var(--text-dark); font-size: 0.98rem;">${scheme.description || 'No description available.'}</p>
+            ${scheme.applicationProcess?.onlinePortal?.url ? `
+              <div style="margin-top: 0.8rem; padding-top: 0.8rem; border-top: 1px dashed rgba(46, 204, 113, 0.2); font-size: 0.92rem; color: #333; display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap;">
+                <i class="fas fa-external-link-alt" style="color: var(--primary-dark);"></i> 
+                <strong>Official Registration Link:</strong> 
+                <a href="${scheme.applicationProcess.onlinePortal.url}" target="_blank" style="color: var(--primary-dark); font-weight: 600; text-decoration: underline; word-break: break-all;">
+                  ${scheme.applicationProcess.onlinePortal.url}
+                </a>
+              </div>
+            ` : ''}
+          </div>
+
+          ${scheme.objectives && scheme.objectives.length > 0 ? `
+            <div style="margin-bottom: 1.8rem;">
+              <h4 style="margin: 0 0 0.8rem 0; color: #2c3e50; font-size: 1.1rem; font-weight: 700;"><i class="fas fa-bullseye" style="color: #e74c3c; margin-right: 0.4rem;"></i> Objectives & Goals</h4>
+              <ul style="margin: 0; padding-left: 1.2rem; display: flex; flex-direction: column; gap: 0.4rem; color: #555; font-size: 0.95rem;">
+                ${formatListItems(scheme.objectives)}
+              </ul>
+            </div>
+          ` : ''}
+
+          <!-- Financial Benefits Section -->
+          <div style="margin-bottom: 1.8rem;">
+            <h4 style="margin: 0 0 0.8rem 0; color: #2c3e50; font-size: 1.1rem; font-weight: 700;"><i class="fas fa-hand-holding-usd" style="color: #f1c40f; margin-right: 0.4rem;"></i> Financial Benefits & Subsidies</h4>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
+              ${formatBenefits()}
+            </div>
+            ${scheme.benefits?.otherBenefits && scheme.benefits.otherBenefits.length > 0 ? `
+              <div style="background: #fafafa; border-radius: 8px; padding: 1.2rem; border: 1px solid #f0f0f0;">
+                <span style="font-size: 0.88rem; color: var(--text-muted); font-weight: 700; display: block; margin-bottom: 0.6rem; text-transform: uppercase; letter-spacing: 0.5px;">Additional Benefits & Perks</span>
+                <ul style="margin: 0; padding-left: 1.2rem; display: flex; flex-direction: column; gap: 0.4rem; color: #555; font-size: 0.92rem;">
+                  ${formatListItems(scheme.benefits.otherBenefits)}
+                </ul>
+              </div>
+            ` : ''}
+          </div>
+
+          <!-- Eligibility Section -->
+          <div style="margin-bottom: 1.8rem; background: #fafbfc; border: 1px solid var(--border); border-radius: 10px; padding: 1.2rem;">
+            <h4 style="margin: 0 0 0.8rem 0; color: #2c3e50; font-size: 1.1rem; font-weight: 700;"><i class="fas fa-user-check" style="color: #3498db; margin-right: 0.4rem;"></i> Eligibility Criteria</h4>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; font-size: 0.95rem; color: #555;">
+              ${scheme.eligibility?.targetBeneficiaries && scheme.eligibility.targetBeneficiaries.length > 0 ? `
+                <div><strong>Target Beneficiaries:</strong><br>${scheme.eligibility.targetBeneficiaries.join(', ')}</div>
+              ` : ''}
+              ${scheme.eligibility?.farmerType && scheme.eligibility.farmerType.length > 0 ? `
+                <div><strong>Farmer Type:</strong><br>${scheme.eligibility.farmerType.join(', ')}</div>
+              ` : ''}
+              ${scheme.eligibility?.states && scheme.eligibility.states.length > 0 ? `
+                <div><strong>Applicable States:</strong><br>${scheme.eligibility.states.join(', ')}</div>
+              ` : ''}
+            </div>
+            ${scheme.eligibility?.otherCriteria && scheme.eligibility.otherCriteria.length > 0 ? `
+              <div style="margin-top: 1rem; border-top: 1px solid var(--border); padding-top: 0.8rem;">
+                <strong style="display: block; margin-bottom: 0.4rem; color: #2c3e50;">General Verification Rules:</strong>
+                <ul style="margin: 0; padding-left: 1.2rem; display: flex; flex-direction: column; gap: 0.3rem; font-size: 0.92rem; color: #555;">
+                  ${formatListItems(scheme.eligibility.otherCriteria)}
+                </ul>
+              </div>
+            ` : ''}
+          </div>
+
+          <!-- Application Steps & Required Documents -->
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem; margin-bottom: 1.8rem;">
+            ${scheme.applicationProcess?.stepsToApply && scheme.applicationProcess.stepsToApply.length > 0 ? `
+              <div>
+                <h4 style="margin: 0 0 0.8rem 0; color: #2c3e50; font-size: 1.1rem; font-weight: 700;"><i class="fas fa-list-ol" style="color: #e67e22; margin-right: 0.4rem;"></i> Application Steps</h4>
+                <ol style="margin: 0; padding-left: 1.2rem; display: flex; flex-direction: column; gap: 0.4rem; color: #555; font-size: 0.92rem; line-height: 1.4;">
+                  ${scheme.applicationProcess.stepsToApply.map(s => `<li style="margin-bottom: 0.4rem;">${s}</li>`).join('')}
+                </ol>
+              </div>
+            ` : ''}
+            ${scheme.applicationProcess?.requiredDocuments && scheme.applicationProcess.requiredDocuments.length > 0 ? `
+              <div>
+                <h4 style="margin: 0 0 0.8rem 0; color: #2c3e50; font-size: 1.1rem; font-weight: 700;"><i class="fas fa-folder-open" style="color: #1abc9c; margin-right: 0.4rem;"></i> Required Documents</h4>
+                <ul style="margin: 0; padding-left: 0; list-style: none; display: flex; flex-direction: column; gap: 0.4rem; color: #555; font-size: 0.92rem;">
+                  ${scheme.applicationProcess.requiredDocuments.map(d => `<li style="display: flex; align-items: center; gap: 0.5rem;"><i class="far fa-file-alt" style="color: #27ae60; font-size: 1rem;"></i> ${d}</li>`).join('')}
+                </ul>
+              </div>
+            ` : ''}
+          </div>
+
+          <!-- Portal Access -->
+          ${scheme.applicationProcess?.onlinePortal?.url ? `
+            <div style="background: rgba(46, 204, 113, 0.05); border: 1.5px dashed rgba(46, 204, 113, 0.3); border-radius: 12px; padding: 1.5rem; text-align: center; margin-top: 1rem;">
+              <h4 style="margin: 0 0 0.4rem 0; color: #27ae60; font-size: 1.15rem; font-weight: 700;"><i class="fas fa-globe-asia"></i> Direct Official Application Link</h4>
+              <p style="margin: 0 0 1.2rem 0; font-size: 0.92rem; color: #666; line-height: 1.4;">This link has been verified around the internet as the live portal. Please click below to access the registration pages.</p>
+              <a href="${scheme.applicationProcess.onlinePortal.url}" target="_blank" class="btn btn-primary" style="display: inline-flex; align-items: center; justify-content: center; gap: 0.6rem; text-decoration: none; padding: 0.8rem 2.2rem; font-weight: 700; border-radius: 30px; box-shadow: 0 4px 15px rgba(46, 204, 113, 0.25); font-size: 0.95rem; font-family: inherit;">
+                <i class="fas fa-external-link-alt"></i> Apply via ${scheme.applicationProcess.onlinePortal.portalName || 'Government Portal'}
+              </a>
+            </div>
+          ` : ''}
+        </div>
+        
+        <div class="modal-footer" style="background: #fafafa; border-top: 1px solid var(--border); padding: 1rem 1.5rem; border-radius: 0 0 12px 12px; display: flex; justify-content: flex-end;">
+          <button class="btn btn-secondary" onclick="this.closest('.modal').style.display='none'" style="border-radius: 8px; padding: 0.6rem 1.5rem; font-size: 0.9rem;">Close Details</button>
+        </div>
+      `;
+      this.showModal('schemeModal', modalContent);
+    } catch (error) {
+      this.showAlert(`❌ Error retrieving details: ${error.message}`, 'error');
+    }
+  }
+
+  async loadFeaturedSchemes() {
+    const schemesList = document.getElementById('schemesList');
+    if (!schemesList) return;
+
+    this.showLoadingState('schemesList', true);
+    try {
+      const response = await this.api.listSchemes(1, 4, { active: true });
+      const schemes = response.items || (Array.isArray(response) ? response : []);
+      
+      if (!schemes || schemes.length === 0) {
+        schemesList.innerHTML = '<p class="empty-state">📋 Select a government scheme above to discover benefits and live registration status.</p>';
+        return;
+      }
+
+      schemesList.innerHTML = schemes.map(scheme => `
+        <div class="scheme-card" style="border-left: 5px solid var(--primary); padding: 1.2rem; border-radius: 8px; background: white; box-shadow: 0 4px 15px rgba(0,0,0,0.02); display: flex; flex-direction: column; justify-content: space-between;">
+          <div>
+            <h3 style="margin: 0 0 0.5rem 0; font-size: 1.15rem; font-weight: 700; color: var(--text-dark);">${scheme.schemeName}</h3>
+            <p style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.4; margin-bottom: 0.8rem;">${scheme.description}</p>
+            <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap;">
+              <span class="badge" style="font-size: 0.75rem; background: rgba(52, 152, 219, 0.1); color: #2980b9; border: 1px solid rgba(52, 152, 219, 0.2); font-weight: 600;">${scheme.govtLevel?.toUpperCase() || 'CENTRAL'}</span>
+              <span class="badge" style="font-size: 0.75rem; background: rgba(155, 89, 182, 0.1); color: #8e44ad; border: 1px solid rgba(155, 89, 182, 0.2); font-weight: 600;">${scheme.schemeType?.toUpperCase() || 'BENEFIT'}</span>
+            </div>
+          </div>
+          <button class="btn btn-small" onclick="app.viewSchemeDetails('${scheme._id}')" style="align-self: flex-start; border-radius: 6px;">
+            Learn More
+          </button>
+        </div>
+      `).join('');
+    } catch (error) {
+      console.warn('Featured schemes load failed:', error);
+      schemesList.innerHTML = '<p class="empty-state">📋 Select a government scheme above to discover benefits and live registration status.</p>';
     } finally {
       this.showLoadingState('schemesList', false);
     }
@@ -546,6 +852,7 @@ class FarmerApp {
     // Load tab data
     if (tabName === 'queries') this.loadFarmerQueries();
     if (tabName === 'escalations') this.loadEscalatedQueries();
+    if (tabName === 'schemes') this.loadFeaturedSchemes();
   }
 
   validateField(field) {

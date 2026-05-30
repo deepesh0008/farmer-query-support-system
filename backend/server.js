@@ -10,6 +10,38 @@ import { connectDB, closeDB } from './config/database.js';
 import config from './config/env.js';
 import logger from './utils/logger.js';
 
+import schemeService from './services/schemeService.js';
+
+const preseedAllSchemes = async () => {
+  try {
+    logger.info('Pre-seeding and warming up all 15 government schemes in the database...');
+    const schemesToSeed = [
+      "Pradhan Mantri Kisan Samman Nidhi (PM-KISAN)",
+      "Pradhan Mantri Fasal Bima Yojana (PMFBY)",
+      "Kisan Credit Card (KCC) Scheme",
+      "Soil Health Card Scheme",
+      "Pradhan Mantri Krishi Sinchayee Yojana (PMKSY)",
+      "National Agriculture Market (e-NAM)",
+      "PM-KUSUM (Pradhan Mantri Kisan Urja Suraksha evam Utthaan Mahabhiyan)",
+      "Paramparagat Krishi Vikas Yojana (PKVY)",
+      "PM Kisan Maan-Dhan Yojana (PM-KMDY)",
+      "Sub-Mission on Agricultural Mechanization (SMAM)",
+      "Rythu Bandhu Scheme Telangana",
+      "Krishak Bandhu Scheme West Bengal",
+      "YSR Rythu Bharosa Andhra Pradesh",
+      "Mukhyamantri Krishi Ashirwad Yojana Jharkhand",
+      "Bhavantar Bhugtan Yojana Madhya Pradesh"
+    ];
+    
+    for (const scheme of schemesToSeed) {
+      await schemeService.harvestSchemeLive(scheme);
+    }
+    logger.info('All 15 government schemes successfully pre-seeded and cached in MongoDB!');
+  } catch (err) {
+    logger.warn(`Failed during background schemes pre-seeding: ${err.message}`);
+  }
+};
+
 const PORT = config.port;
 
 let server;
@@ -21,6 +53,9 @@ const startServer = async () => {
     // Connect to MongoDB
     await connectDB();
     logger.info('Database connected successfully');
+
+    // Trigger pre-seeding in background
+    preseedAllSchemes();
 
     // Start Express server
     server = app.listen(PORT, () => {

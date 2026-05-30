@@ -26,7 +26,8 @@ export const getScheme = async (req, res) => {
 
 export const searchSchemes = async (req, res) => {
   const queryText = req.query.q;
-  const data = await schemeService.searchSchemes({ queryText });
+  const live = req.query.live === 'true';
+  const data = await schemeService.searchSchemes({ queryText, live });
   return res.status(HTTP_STATUS.OK).json({ success: true, data });
 };
 
