@@ -11,6 +11,9 @@ const router = express.Router();
 // Public AI chatbot assistant
 router.post('/chatbot', queryController.chatbotQuery);
 
+// Premium Expert Chat (farmer only)
+router.post('/expert-chat', authenticateToken, farmerOnly, queryController.expertChatQuery);
+
 // Create a new query (farmer only)
 router.post('/', authenticateToken, farmerOnly, queryController.createQuery);
 

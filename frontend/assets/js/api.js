@@ -219,6 +219,13 @@ class APIClient {
       body: JSON.stringify({ status }),
     });
   }
+
+  async sendExpertMessage(expertName, specialty, message, history = []) {
+    return this.request('/queries/expert-chat', {
+      method: 'POST',
+      body: JSON.stringify({ expertName, specialty, message, history }),
+    });
+  }
 }
 
 // Create global API client instance

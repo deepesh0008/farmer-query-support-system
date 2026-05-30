@@ -25,6 +25,12 @@ class FarmerApp {
       queryForm.addEventListener('submit', (e) => this.handleQuerySubmit(e));
     }
 
+    // Expert Chat Form
+    const expertChatForm = document.getElementById('expertChatForm');
+    if (expertChatForm) {
+      expertChatForm.addEventListener('submit', (e) => this.handleExpertChatSubmit(e));
+    }
+
     // Tab switching
     document.querySelectorAll('.sidebar-item').forEach(item => {
       item.addEventListener('click', (e) => {
@@ -1013,6 +1019,220 @@ class FarmerApp {
     modal.onclick = (e) => {
       if (e.target === modal) modal.style.display = 'none';
     };
+  }
+
+  startExpertChat(expertName, specialty, greeting) {
+    this.currentExpert = { name: expertName, specialty: specialty };
+    this.expertChatHistory = [];
+
+    // Select theme colors based on expert
+    let gradient = 'linear-gradient(135deg, #27ae60 0%, #219a52 100%)'; // Rajesh Kumar Green
+    let avatar = '👨‍🌾';
+    let btnColor = '#27ae60';
+    let userBg = 'linear-gradient(135deg, #2ecc71 0%, #27ae60 100%)';
+
+    if (expertName === 'Priya Singh') {
+      gradient = 'linear-gradient(135deg, #3498db 0%, #2980b9 100%)'; // Priya Singh Blue
+      avatar = '👩‍🌾';
+      btnColor = '#3498db';
+      userBg = 'linear-gradient(135deg, #5dade2 0%, #3498db 100%)';
+    } else if (expertName === 'Deepak Patel') {
+      gradient = 'linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%)'; // Deepak Patel Purple
+      avatar = '👨‍🌾';
+      btnColor = '#9b59b6';
+      userBg = 'linear-gradient(135deg, #af7ac5 0%, #9b59b6 100%)';
+    }
+
+    this.currentExpertColors = {
+      gradient,
+      btnColor,
+      userBg
+    };
+
+    // Update Header
+    const header = document.getElementById('expertChatHeader');
+    const avatarContainer = document.getElementById('expertChatAvatar');
+    const nameContainer = document.getElementById('expertChatName');
+    const specialtyContainer = document.getElementById('expertChatSpecialty');
+    const formButton = document.querySelector('#expertChatForm button[type="submit"]');
+    const textInput = document.getElementById('expertChatInput');
+
+    if (header) header.style.background = gradient;
+    if (avatarContainer) avatarContainer.textContent = avatar;
+    if (nameContainer) nameContainer.textContent = expertName;
+    if (specialtyContainer) specialtyContainer.textContent = specialty;
+    if (formButton) {
+      formButton.style.background = btnColor;
+      formButton.style.boxShadow = `0 4px 10px ${btnColor}4d`;
+    }
+    if (textInput) {
+      textInput.style.borderColor = '#ddd';
+      textInput.onfocus = () => { textInput.style.borderColor = btnColor; };
+      textInput.onblur = () => { textInput.style.borderColor = '#ddd'; };
+      textInput.value = '';
+    }
+
+    // Inject chat styles dynamically if not loaded
+    if (!document.getElementById('expertChatStyles')) {
+      const style = document.createElement('style');
+      style.id = 'expertChatStyles';
+      style.textContent = `
+        .expert-bubble {
+          align-self: flex-start;
+          background: white;
+          color: #2c3e50;
+          border: 1px solid #eef0f2;
+          border-radius: 18px 18px 18px 0px;
+          padding: 0.8rem 1.2rem;
+          max-width: 80%;
+          box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+          line-height: 1.5;
+          font-size: 0.95rem;
+          animation: bubbleFadeIn 0.25s ease-out;
+          text-align: left;
+        }
+        .user-bubble {
+          align-self: flex-end;
+          color: white;
+          border-radius: 18px 18px 0px 18px;
+          padding: 0.8rem 1.2rem;
+          max-width: 80%;
+          box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+          line-height: 1.5;
+          font-size: 0.95rem;
+          animation: bubbleFadeIn 0.25s ease-out;
+          text-align: left;
+        }
+        .typing-bubble {
+          align-self: flex-start;
+          background: #eef0f2;
+          border-radius: 18px 18px 18px 0px;
+          padding: 0.8rem 1.2rem;
+          display: flex;
+          align-items: center;
+          gap: 0.3rem;
+          width: fit-content;
+        }
+        .typing-dot {
+          width: 8px;
+          height: 8px;
+          background: #7f8c8d;
+          border-radius: 50%;
+          animation: typingPulse 1.2s infinite ease-in-out;
+        }
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes bubbleFadeIn {
+          from { opacity: 0; transform: translateY(8px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes typingPulse {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-4px); }
+        }
+      `;
+      document.head.appendChild(style);
+    }
+
+    // Clear Body & Add Greeting
+    const chatBody = document.getElementById('expertChatBody');
+    if (chatBody) {
+      chatBody.innerHTML = '';
+      this.appendExpertChatMessage('expert', greeting);
+    }
+
+    // Show Modal
+    const modal = document.getElementById('expertChatModal');
+    if (modal) modal.style.display = 'block';
+  }
+
+  appendExpertChatMessage(sender, text) {
+    const chatBody = document.getElementById('expertChatBody');
+    if (!chatBody) return;
+
+    const bubble = document.createElement('div');
+    if (sender === 'user') {
+      bubble.className = 'user-bubble';
+      bubble.style.background = this.currentExpertColors?.userBg || '#27ae60';
+    } else {
+      bubble.className = 'expert-bubble';
+    }
+
+    // Parse clean bullet lists and bold text
+    const formattedText = text
+      .replace(/\n/g, '<br>')
+      .replace(/\* (.*?)(?:<br>|$)/g, '• $1<br>')
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+
+    bubble.innerHTML = formattedText;
+    chatBody.appendChild(bubble);
+
+    // Auto-scroll
+    chatBody.scrollTop = chatBody.scrollHeight;
+  }
+
+  showExpertTypingIndicator(show) {
+    const chatBody = document.getElementById('expertChatBody');
+    if (!chatBody) return;
+
+    const existing = document.getElementById('expertTypingBubble');
+    if (existing) existing.remove();
+
+    if (show) {
+      const bubble = document.createElement('div');
+      bubble.id = 'expertTypingBubble';
+      bubble.className = 'typing-bubble';
+      bubble.innerHTML = `
+        <div class="typing-dot"></div>
+        <div class="typing-dot"></div>
+        <div class="typing-dot"></div>
+      `;
+      chatBody.appendChild(bubble);
+      chatBody.scrollTop = chatBody.scrollHeight;
+    }
+  }
+
+  async handleExpertChatSubmit(e) {
+    e.preventDefault();
+    const input = document.getElementById('expertChatInput');
+    if (!input) return;
+
+    const text = input.value.trim();
+    if (!text) return;
+
+    input.value = '';
+
+    // Render user message
+    this.appendExpertChatMessage('user', text);
+
+    // Show typing loader
+    this.showExpertTypingIndicator(true);
+
+    try {
+      // Send API call to backend
+      const response = await this.api.sendExpertMessage(
+        this.currentExpert.name,
+        this.currentExpert.specialty,
+        text,
+        this.expertChatHistory
+      );
+
+      // Hide typing loader
+      this.showExpertTypingIndicator(false);
+
+      if (response && response.success && response.reply) {
+        this.appendExpertChatMessage('expert', response.reply);
+        // Save to chat history
+        this.expertChatHistory.push({ sender: 'user', text: text });
+        this.expertChatHistory.push({ sender: 'expert', text: response.reply });
+      } else {
+        this.appendExpertChatMessage('expert', 'I apologize, my cellular connection in the fields is acting up. Could you try asking again?');
+      }
+    } catch (error) {
+      this.showExpertTypingIndicator(false);
+      console.error('Expert chat API failed:', error);
+      this.appendExpertChatMessage('expert', 'I apologize, I am temporarily having trouble connecting. Let me check the connection and try again shortly!');
+    }
   }
 }
 

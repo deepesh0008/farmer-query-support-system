@@ -687,7 +687,7 @@
                 <i class="fas fa-star-half-alt" style="color: #f39c12;"></i>
                 <span style="margin-left: 0.5rem;">4.8/5</span>
               </div>
-              <button class="btn btn-primary btn-small" onclick="alert('Chat with Rajesh')" style="margin-top: 0.5rem; width: 100%;">
+              <button class="btn btn-primary btn-small" onclick="app.startExpertChat('Rajesh Kumar', 'Wheat & Rice Specialist', 'Namaste! I am Rajesh Kumar, a wheat and rice cultivation specialist with over 15 years of experience. How can I help you improve your grain yield or solve a crop issue today?')" style="margin-top: 0.5rem; width: 100%;">
                 <i class="fas fa-comments"></i> Chat Now
               </button>
             </div>
@@ -704,7 +704,7 @@
                 <i class="fas fa-star" style="color: #f39c12;"></i>
                 <span style="margin-left: 0.5rem;">4.9/5</span>
               </div>
-              <button class="btn btn-primary btn-small" onclick="alert('Chat with Priya')" style="margin-top: 0.5rem; width: 100%;">
+              <button class="btn btn-primary btn-small" onclick="app.startExpertChat('Priya Singh', 'Vegetable & Horticulture', 'Hello there! I am Priya Singh, specializing in vegetable farming, fruit orchards, greenhouse setups, and horticulture. Ask me anything about drip irrigation, organic pest controls, or plant health!')" style="margin-top: 0.5rem; width: 100%;">
                 <i class="fas fa-comments"></i> Chat Now
               </button>
             </div>
@@ -721,7 +721,7 @@
                 <i class="fas fa-star-half-alt" style="color: #f39c12;"></i>
                 <span style="margin-left: 0.5rem;">4.7/5</span>
               </div>
-              <button class="btn btn-primary btn-small" onclick="alert('Chat with Deepak')" style="margin-top: 0.5rem; width: 100%;">
+              <button class="btn btn-primary btn-small" onclick="app.startExpertChat('Deepak Patel', 'Cotton & Sugarcane', 'Greetings! I am Deepak Patel, with 18+ years of experience in cotton and sugarcane cultivation. Got questions on pink bollworm management, red rot disease, or maximizing commercial cash crop margins? Ask away!')" style="margin-top: 0.5rem; width: 100%;">
                 <i class="fas fa-comments"></i> Chat Now
               </button>
             </div>
@@ -819,6 +819,38 @@
             </div>
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Premium Expert Chat Modal -->
+  <div id="expertChatModal" class="modal">
+    <div class="modal-content-wrapper" style="max-width: 550px; height: 85vh; display: flex; flex-direction: column;">
+      <div id="expertChatHeader" class="modal-header" style="background: linear-gradient(135deg, #27ae60 0%, #219a52 100%); display: flex; align-items: center; justify-content: space-between; padding: 1.2rem 1.5rem; flex-shrink: 0;">
+        <div style="display: flex; align-items: center; gap: 1rem;">
+          <div id="expertChatAvatar" style="font-size: 2.2rem; background: white; border-radius: 50%; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">👨‍🌾</div>
+          <div style="text-align: left;">
+            <h3 id="expertChatName" style="margin: 0; font-size: 1.25rem; font-weight: 700; color: white;">Rajesh Kumar</h3>
+            <div style="display: flex; align-items: center; gap: 0.4rem; margin-top: 0.2rem;">
+              <span style="display: inline-block; width: 8px; height: 8px; background-color: #2ecc71; border-radius: 50%; animation: pulse 1.5s infinite;"></span>
+              <span id="expertChatSpecialty" style="font-size: 0.85rem; color: rgba(255, 255, 255, 0.9); font-weight: 550;">Wheat & Rice Specialist</span>
+            </div>
+          </div>
+        </div>
+        <button onclick="document.getElementById('expertChatModal').style.display='none';" style="background: transparent; border: none; color: white; font-size: 1.5rem; cursor: pointer; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.15)'" onmouseout="this.style.transform='scale(1)'">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div id="expertChatBody" class="modal-content" style="padding: 1.5rem; background: #f8f9fa; flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 1rem; border-bottom: 1px solid #eee;">
+        <!-- Chat bubbles will go here -->
+      </div>
+      <div class="modal-footer" style="padding: 0.8rem 1.2rem; background: white; display: flex; align-items: center; gap: 0.8rem; border-top: none; flex-shrink: 0; margin-top: 0;">
+        <form id="expertChatForm" style="display: flex; width: 100%; gap: 0.8rem; align-items: center; margin: 0;">
+          <input type="text" id="expertChatInput" placeholder="Ask your expert helper anything..." style="flex-grow: 1; padding: 0.8rem 1.2rem; border: 1px solid #ddd; border-radius: 30px; font-size: 0.95rem; outline: none; transition: border-color 0.2s; box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);" required autocomplete="off">
+          <button type="submit" class="btn btn-primary" style="border-radius: 50%; width: 44px; height: 44px; padding: 0; display: flex; align-items: center; justify-content: center; flex-shrink: 0; background: #27ae60; border: none; box-shadow: 0 4px 10px rgba(39, 174, 96, 0.3);">
+            <i class="fas fa-paper-plane" style="font-size: 1.05rem; margin-left: -2px;"></i>
+          </button>
+        </form>
       </div>
     </div>
   </div>

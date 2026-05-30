@@ -67,6 +67,15 @@ export const chatbotQuery = async (req, res) => {
   return res.status(HTTP_STATUS.OK).json({ success: true, reply });
 };
 
+export const expertChatQuery = async (req, res) => {
+  const { expertName, specialty, message, history } = req.body;
+  if (!message) {
+    return res.status(400).json({ success: false, message: 'Message parameter is required' });
+  }
+  const reply = await queryService.expertChatQuery({ expertName, specialty, message, history });
+  return res.status(HTTP_STATUS.OK).json({ success: true, reply });
+};
+
 export default {
   createQuery,
   listQueries,
@@ -74,4 +83,5 @@ export default {
   addFeedback,
   escalate,
   chatbotQuery,
+  expertChatQuery,
 };
