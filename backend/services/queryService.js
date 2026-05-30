@@ -41,13 +41,39 @@ const searchDuckDuckGo = async (queryText) => {
   }
 };
 
+// Wikipedia search helper for reliable semantic fallback
+const searchWikipedia = async (queryText) => {
+  try {
+    const response = await axios.get(`https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(queryText)}&format=json&utf8=`, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+      }
+    });
+    const results = response.data.query?.search || [];
+    return results.slice(0, 3).map(r => `${r.title}: ${r.snippet.replace(/<[^>]*>/g, '')}`).join('\n');
+  } catch (err) {
+    logger.warn(`Wikipedia search fallback failed: ${err.message}`);
+    return '';
+  }
+};
+
+// Unified grounding helper that tries DuckDuckGo first, then falls back to Wikipedia
+const searchGroundedData = async (queryText) => {
+  let results = await searchDuckDuckGo(queryText);
+  if (!results) {
+    logger.info(`DuckDuckGo search returned empty or blocked. Falling back to Wikipedia for: "${queryText}"`);
+    results = await searchWikipedia(queryText);
+  }
+  return results;
+};
+
 // Generate AI response either via OpenAI Chat Completions or use stub fallback
 const generateAIResponse = async (queryDoc) => {
   // If OpenAI API key configured, call the Chat Completions API
   if (config.openai && config.openai.apiKey) {
     try {
       // 1. Retrieve web grounding details
-      const webGrounding = await searchDuckDuckGo(queryDoc.originalQuery);
+      const webGrounding = await searchGroundedData(queryDoc.originalQuery);
 
       const systemPrompt = `You are an expert agronomist and plant pathologist. Ground all agricultural and plant treatment advice in the provided web search grounding details and best farming practices. Provide concise, practical, and safe advice. 
       Always format a short structured JSON summary block at the end containing keys: causeOfIssue, symptoms (array), recommendedSolution, preventiveMeasures (array), and references (array).`;
@@ -219,7 +245,7 @@ export const escalateQuery = async (queryId, escalationData = {}) => {
 
 export const chatbotQuery = async ({ message, history = [] }) => {
   try {
-    const webGrounding = await searchDuckDuckGo(message);
+    const webGrounding = await searchGroundedData(message);
     const openai = getOpenAIClient();
 
     const messages = [

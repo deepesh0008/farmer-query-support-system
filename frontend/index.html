@@ -1,62 +1,188 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Farmer Query Support System</title>
+  <link rel="icon" type="image/png" href="assets/images/favicon.png">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/css/styles.css">
   <style>
     .hero {
-      background: linear-gradient(135deg, #2ecc71 0%, #3498db 100%);
+      background: linear-gradient(rgba(0, 0, 0, 0.02), rgba(0, 0, 0, 0.08)), url('Gemini_Generated_Image_entvfentvfentvfe.png') no-repeat center center;
+      background-size: cover;
       color: white;
-      padding: 8rem 0;
+      min-height: 610px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 0;
+      position: relative;
+      background-color: #2ecc71;
     }
-    
-    .hero-content h2 {
-      font-size: 2.8rem;
-      margin-bottom: 1rem;
-      font-weight: 700;
+
+    .hero-content {
+      width: 100%;
     }
-    
-    .hero-content p {
-      font-size: 1.3rem;
-      margin-bottom: 2rem;
-      opacity: 0.95;
+
+    .hero-title {
+      font-family: 'Outfit', 'Segoe UI', sans-serif;
+      font-size: 3.5rem;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      margin-bottom: 0.2rem;
+      color: #179e66;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
+      text-transform: uppercase;
+      background: linear-gradient(135deg, #117b4c 0%, #1aa66e 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: inline-block;
+      white-space: nowrap;
+    }
+
+    .hero-subtitle {
+      font-family: 'Outfit', 'Segoe UI', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 600;
+      letter-spacing: 2px;
+      margin-bottom: 2.2rem;
+      color: #306e52;
+      text-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+      text-transform: uppercase;
+    }
+
+    .hero-header-block {
+      align-self: flex-start;
+      text-align: left;
+      padding-left: 2.5rem;
+      margin-top: 1rem;
+      width: 100%;
+    }
+
+    .hero-bottom-block {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: center;
+      width: 100%;
+      margin-top: auto;
+      padding-bottom: 1rem;
+      padding-left: 2.5rem;
+      gap: 1.5rem;
+    }
+
+    .hero-chips-container {
+      display: flex;
+      gap: 1.5rem;
+      justify-content: flex-start;
+      align-items: center;
+      width: 100%;
+      flex-wrap: wrap;
+    }
+
+    .hero-buttons {
+      display: flex;
+      gap: 1.2rem;
+      justify-content: flex-start;
+      align-items: center;
+      width: 100%;
+    }
+
+    .features {
+      background-color: #f3faf5 !important;
+      padding: 5rem 0 !important;
+    }
+
+    @media (max-width: 768px) {
+      .hero-title {
+        font-size: 2.2rem;
+        white-space: normal;
+        text-align: center;
+        display: block;
+      }
+
+      .hero-subtitle {
+        font-size: 1rem;
+        letter-spacing: 1px;
+        text-align: center;
+      }
+
+      .hero-header-block {
+        align-self: center;
+        text-align: center;
+        padding-left: 0;
+      }
+
+      .hero-bottom-block {
+        align-items: center;
+        padding-left: 0;
+      }
+
+      .hero-chips-container {
+        justify-content: center !important;
+      }
+
+      .hero-buttons {
+        justify-content: center !important;
+      }
     }
   </style>
 </head>
+
 <body>
   <!-- Navigation -->
-  <nav class="navbar" style="box-shadow: 0 2px 8px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 1000; background: white;">
+  <nav class="navbar"
+    style="box-shadow: 0 4px 15px rgba(0,0,0,0.15); position: sticky; top: 0; z-index: 1000; background: linear-gradient(to right, #107bc4, #179e66); padding: 0.9rem 0; border: none;">
     <div class="container" style="display: flex; justify-content: space-between; align-items: center;">
       <!-- Logo on Left -->
-      <a href="index.html" style="text-decoration: none; display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
-        <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #2ecc71 0%, #3498db 100%); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 1.5rem;">
-          <i class="fas fa-leaf"></i>
+      <a href="index.html"
+        style="text-decoration: none; display: flex; align-items: center; gap: 0.6rem; cursor: pointer;">
+        <div
+          style="width: 40px; height: 40px; background: white; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #107bc4; font-weight: bold; font-size: 1.5rem; box-shadow: 0 3px 8px rgba(0,0,0,0.1);">
+          <i class="fas fa-leaf" style="color: #179e66;"></i>
         </div>
-        <span style="font-weight: 700; color: #333; font-size: 1.1rem;">Farmer Query</span>
+        <span style="font-weight: 700; color: white; font-size: 1.25rem; letter-spacing: 0.5px;">Farmer Query</span>
       </a>
-      
+
       <!-- Navigation Menu on Right -->
-      <div class="navbar-menu" style="display: flex; gap: 1.5rem; align-items: center;">
-        <a href="#features" class="nav-link" style="text-decoration: none; color: #333; font-weight: 500; transition: color 0.3s;">
+      <div class="navbar-menu" style="display: flex; gap: 1.8rem; align-items: center;">
+        <a href="#features" class="nav-link"
+          style="text-decoration: none; color: rgba(255, 255, 255, 0.92); font-weight: 600; transition: all 0.3s; font-size: 0.95rem;"
+          onmouseover="this.style.color='white'; this.style.transform='translateY(-1px)';"
+          onmouseout="this.style.color='rgba(255, 255, 255, 0.92)'; this.style.transform='translateY(0)';">
           Features
         </a>
-        <a href="#how-it-works" class="nav-link" style="text-decoration: none; color: #333; font-weight: 500; transition: color 0.3s;">
+        <a href="#how-it-works" class="nav-link"
+          style="text-decoration: none; color: rgba(255, 255, 255, 0.92); font-weight: 600; transition: all 0.3s; font-size: 0.95rem;"
+          onmouseover="this.style.color='white'; this.style.transform='translateY(-1px)';"
+          onmouseout="this.style.color='rgba(255, 255, 255, 0.92)'; this.style.transform='translateY(0)';">
           How It Works
         </a>
-        <a href="#about" class="nav-link" style="text-decoration: none; color: #333; font-weight: 500; transition: color 0.3s;">
+        <a href="#about" class="nav-link"
+          style="text-decoration: none; color: rgba(255, 255, 255, 0.92); font-weight: 600; transition: all 0.3s; font-size: 0.95rem;"
+          onmouseover="this.style.color='white'; this.style.transform='translateY(-1px)';"
+          onmouseout="this.style.color='rgba(255, 255, 255, 0.92)'; this.style.transform='translateY(0)';">
           About
         </a>
-        <a href="#contact" class="nav-link" style="text-decoration: none; color: #333; font-weight: 500; transition: color 0.3s;">
+        <a href="#contact" class="nav-link"
+          style="text-decoration: none; color: rgba(255, 255, 255, 0.92); font-weight: 600; transition: all 0.3s; font-size: 0.95rem;"
+          onmouseover="this.style.color='white'; this.style.transform='translateY(-1px)';"
+          onmouseout="this.style.color='rgba(255, 255, 255, 0.92)'; this.style.transform='translateY(0)';">
           Contact
         </a>
         <span id="navAuthLinks" style="display: flex; gap: 1.5rem; align-items: center;">
-          <a href="pages/login-enhanced.html" class="nav-link" style="text-decoration: none; color: #2ecc71; font-weight: 600; transition: color 0.3s;">
+          <a href="pages/login-enhanced.html" class="nav-link"
+            style="text-decoration: none; color: white; font-weight: 600; transition: all 0.3s; font-size: 0.95rem;"
+            onmouseover="this.style.opacity='0.8';" onmouseout="this.style.opacity='1';">
             Login
           </a>
-          <a href="pages/register-enhanced.html" class="nav-link btn btn-primary" style="padding: 0.6rem 1.2rem; border-radius: 6px; font-weight: 600;">
+          <a href="pages/register-enhanced.html" class="btn"
+            style="padding: 0.6rem 1.4rem; border-radius: 50px; font-weight: 700; background: white; color: #179e66; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); transition: all 0.3s ease; text-decoration: none; font-size: 0.9rem;"
+            onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 15px rgba(0, 0, 0, 0.25)';"
+            onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(0, 0, 0, 0.15)';">
             Register
           </a>
         </span>
@@ -66,30 +192,82 @@
 
   <!-- Hero Section -->
   <section class="hero">
-    <div class="container">
-      <div class="hero-content" style="text-align: center;">
-        <h2>Get Expert Farming Advice Instantly</h2>
-        <p>AI-powered agricultural guidance with voice, image, and text support</p>
+    <div class="container"
+      style="display: flex; flex-direction: column; justify-content: space-between; min-height: 520px; width: 100%; padding: 1.5rem 0;">
+
+      <!-- Top Left Header Block -->
+      <div class="hero-header-block">
+        <h1 class="hero-title">Digital Krishi Officer</h1>
+        <p class="hero-subtitle" style="margin-bottom: 0;">Smart AI-Powered Agricultural Advisory</p>
+      </div>
+
+      <!-- Bottom Interactive Block -->
+      <div class="hero-bottom-block">
+
+        <!-- Two separate small interactive chips styled with light-green backgrounds (positioned in the left-bottom) -->
+        <div class="hero-chips-container">
+
+          <!-- Voice Query Card (Small) -->
+          <div onclick="handleMicClick()"
+            style="cursor: pointer; background: #eef9f3; border-radius: 16px; padding: 0.75rem 1.4rem; box-shadow: 0 8px 22px rgba(0,0,0,0.12); display: flex; align-items: center; gap: 0.8rem; border: 1.5px solid rgba(255, 255, 255, 0.7); transition: all 0.3s ease;"
+            onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 12px 26px rgba(0,0,0,0.18)';"
+            onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 8px 22px rgba(0,0,0,0.12)';">
+            <div
+              style="width: 44px; height: 44px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 3px 6px rgba(23, 158, 102, 0.1); transition: background 0.25s;"
+              onmouseover="this.style.background='#f0fbf5';" onmouseout="this.style.background='white';">
+              <i class="fas fa-microphone" style="font-size: 1.3rem; color: #179e66;"></i>
+            </div>
+            <span style="font-size: 0.95rem; font-weight: 800; color: #179e66; font-family: 'Outfit', sans-serif;">Voice
+              Query</span>
+          </div>
+
+          <!-- Upload Photo Card (Small) -->
+          <div onclick="handleCameraClick()"
+            style="cursor: pointer; background: #eef9f3; border-radius: 16px; padding: 0.75rem 1.4rem; box-shadow: 0 8px 22px rgba(0,0,0,0.12); display: flex; align-items: center; gap: 0.8rem; border: 1.5px solid rgba(255, 255, 255, 0.7); transition: all 0.3s ease;"
+            onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 12px 26px rgba(0,0,0,0.18)';"
+            onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 8px 22px rgba(0,0,0,0.12)';">
+            <div
+              style="width: 44px; height: 44px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 3px 6px rgba(23, 158, 102, 0.1); transition: background 0.25s;"
+              onmouseover="this.style.background='#f0fbf5';" onmouseout="this.style.background='white';">
+              <i class="fas fa-camera" style="font-size: 1.3rem; color: #179e66;"></i>
+            </div>
+            <span
+              style="font-size: 0.95rem; font-weight: 800; color: #179e66; font-family: 'Outfit', sans-serif;">Upload
+              Photo</span>
+          </div>
+
+        </div>
+
+        <!-- Login/Register Buttons (positioned in the left-bottom) -->
         <div class="hero-buttons">
-          <a href="pages/login.html" class="btn btn-primary" style="font-size: 1.1rem; padding: 0.9rem 2.5rem;">
+          <a href="pages/login-enhanced.html" class="btn btn-primary"
+            style="font-size: 1.05rem; padding: 0.8rem 2.6rem; border-radius: 50px; background: linear-gradient(135deg, #107bc4 0%, #179e66 100%); border: none; box-shadow: 0 8px 22px rgba(23, 158, 102, 0.35); font-weight: 600; display: inline-flex; align-items: center; gap: 0.5rem; transition: transform 0.2s, box-shadow 0.2s;"
+            onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 12px 26px rgba(23, 158, 102, 0.5)';"
+            onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 8px 22px rgba(23, 158, 102, 0.35)';">
             <i class="fas fa-sign-in-alt"></i> Login
           </a>
-          <a href="pages/register.html" class="btn btn-secondary" style="font-size: 1.1rem; padding: 0.9rem 2.5rem;">
+          <a href="pages/register-enhanced.html" class="btn btn-secondary"
+            style="font-size: 1.05rem; padding: 0.8rem 2.6rem; border-radius: 50px; background: white; color: #179e66; border: 2px solid white; box-shadow: 0 8px 22px rgba(0, 0, 0, 0.12); font-weight: 600; display: inline-flex; align-items: center; gap: 0.5rem; transition: transform 0.2s, box-shadow 0.2s;"
+            onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 12px 26px rgba(0, 0, 0, 0.22)';"
+            onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 8px 22px rgba(0, 0, 0, 0.12)';">
             <i class="fas fa-user-plus"></i> Register
           </a>
         </div>
+
       </div>
+
     </div>
   </section>
 
   <!-- Features Section -->
   <section class="features" id="features">
     <div class="container">
-      <h2>Why Choose Farmer Query Support?</h2>
-      
+      <h2>Features of Digital Krishi Officer</h2>
+
       <div class="features-grid">
         <!-- Feature 1: Voice Queries -->
-        <div class="feature-card" onclick="navigateToFeature('voice')" style="cursor: pointer; transition: all 0.3s ease; position: relative; overflow: hidden;">
+        <div class="feature-card" onclick="navigateToFeature('voice')"
+          style="cursor: pointer; transition: all 0.3s ease; position: relative; overflow: hidden;">
           <div style="font-size: 2.5rem; color: #2ecc71; margin-bottom: 1rem;">
             <i class="fas fa-microphone"></i>
           </div>
@@ -101,7 +279,8 @@
         </div>
 
         <!-- Feature 2: Image Analysis -->
-        <div class="feature-card" onclick="navigateToFeature('image')" style="cursor: pointer; transition: all 0.3s ease; position: relative; overflow: hidden;">
+        <div class="feature-card" onclick="navigateToFeature('image')"
+          style="cursor: pointer; transition: all 0.3s ease; position: relative; overflow: hidden;">
           <div style="font-size: 2.5rem; color: #3498db; margin-bottom: 1rem;">
             <i class="fas fa-image"></i>
           </div>
@@ -113,7 +292,8 @@
         </div>
 
         <!-- Feature 3: Weather Insights -->
-        <div class="feature-card" onclick="navigateToFeature('weather')" style="cursor: pointer; transition: all 0.3s ease; position: relative; overflow: hidden;">
+        <div class="feature-card" onclick="navigateToFeature('weather')"
+          style="cursor: pointer; transition: all 0.3s ease; position: relative; overflow: hidden;">
           <div style="font-size: 2.5rem; color: #f39c12; margin-bottom: 1rem;">
             <i class="fas fa-cloud-sun"></i>
           </div>
@@ -125,7 +305,8 @@
         </div>
 
         <!-- Feature 4: Market Prices -->
-        <div class="feature-card" onclick="navigateToFeature('market')" style="cursor: pointer; transition: all 0.3s ease; position: relative; overflow: hidden;">
+        <div class="feature-card" onclick="navigateToFeature('market')"
+          style="cursor: pointer; transition: all 0.3s ease; position: relative; overflow: hidden;">
           <div style="font-size: 2.5rem; color: #e74c3c; margin-bottom: 1rem;">
             <i class="fas fa-chart-bar"></i>
           </div>
@@ -137,7 +318,8 @@
         </div>
 
         <!-- Feature 5: Government Schemes -->
-        <div class="feature-card" onclick="navigateToFeature('schemes')" style="cursor: pointer; transition: all 0.3s ease; position: relative; overflow: hidden;">
+        <div class="feature-card" onclick="navigateToFeature('schemes')"
+          style="cursor: pointer; transition: all 0.3s ease; position: relative; overflow: hidden;">
           <div style="font-size: 2.5rem; color: #9b59b6; margin-bottom: 1rem;">
             <i class="fas fa-file-contract"></i>
           </div>
@@ -149,7 +331,8 @@
         </div>
 
         <!-- Feature 6: Expert Support -->
-        <div class="feature-card" onclick="navigateToFeature('support')" style="cursor: pointer; transition: all 0.3s ease; position: relative; overflow: hidden;">
+        <div class="feature-card" onclick="navigateToFeature('support')"
+          style="cursor: pointer; transition: all 0.3s ease; position: relative; overflow: hidden;">
           <div style="font-size: 2.5rem; color: #1abc9c; margin-bottom: 1rem;">
             <i class="fas fa-headset"></i>
           </div>
@@ -167,11 +350,12 @@
   <section style="padding: 4rem 0; background: #f8f9fa;" id="how-it-works">
     <div class="container">
       <h2 style="text-align: center; margin-bottom: 3rem;">How It Works</h2>
-      
+
       <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem;">
         <!-- Step 1 -->
         <div class="card">
-          <div style="width: 50px; height: 50px; background: #2ecc71; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem; margin-bottom: 1rem;">
+          <div
+            style="width: 50px; height: 50px; background: #2ecc71; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem; margin-bottom: 1rem;">
             1
           </div>
           <h3>Register or Login</h3>
@@ -180,7 +364,8 @@
 
         <!-- Step 2 -->
         <div class="card">
-          <div style="width: 50px; height: 50px; background: #3498db; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem; margin-bottom: 1rem;">
+          <div
+            style="width: 50px; height: 50px; background: #3498db; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem; margin-bottom: 1rem;">
             2
           </div>
           <h3>Submit Your Query</h3>
@@ -189,7 +374,8 @@
 
         <!-- Step 3 -->
         <div class="card">
-          <div style="width: 50px; height: 50px; background: #f39c12; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem; margin-bottom: 1rem;">
+          <div
+            style="width: 50px; height: 50px; background: #f39c12; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem; margin-bottom: 1rem;">
             3
           </div>
           <h3>Get AI Response</h3>
@@ -198,7 +384,8 @@
 
         <!-- Step 4 -->
         <div class="card">
-          <div style="width: 50px; height: 50px; background: #e74c3c; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem; margin-bottom: 1rem;">
+          <div
+            style="width: 50px; height: 50px; background: #e74c3c; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem; margin-bottom: 1rem;">
             4
           </div>
           <h3>Escalate if Needed</h3>
@@ -207,7 +394,8 @@
 
         <!-- Step 5 -->
         <div class="card">
-          <div style="width: 50px; height: 50px; background: #9b59b6; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem; margin-bottom: 1rem;">
+          <div
+            style="width: 50px; height: 50px; background: #9b59b6; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem; margin-bottom: 1rem;">
             5
           </div>
           <h3>Additional Resources</h3>
@@ -216,7 +404,8 @@
 
         <!-- Step 6 -->
         <div class="card">
-          <div style="width: 50px; height: 50px; background: #1abc9c; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem; margin-bottom: 1rem;">
+          <div
+            style="width: 50px; height: 50px; background: #1abc9c; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem; margin-bottom: 1rem;">
             6
           </div>
           <h3>Share Feedback</h3>
@@ -227,27 +416,36 @@
   </section>
 
   <!-- Stats Section -->
-  <section style="padding: 4rem 0; background: linear-gradient(135deg, #2ecc71 0%, #3498db 100%); color: white; text-align: center;" id="about">
+  <section
+    style="padding: 4rem 0; background: linear-gradient(135deg, #2ecc71 0%, #3498db 100%); color: white; text-align: center;"
+    id="about">
     <div class="container">
       <h2 style="margin-bottom: 2rem; color: white;">About Our Platform</h2>
       <p style="max-width: 800px; margin: 0 auto 2rem; font-size: 1.1rem; line-height: 1.6;">
-        The Farmer Query Support System is a comprehensive AI-powered agricultural platform designed to provide Indian farmers 
-        with instant access to expert advice, market information, and government schemes. Our mission is to bridge the gap between 
-        farmers and agricultural expertise, enabling better decision-making for improved crop yields and sustainable farming practices.
+        The Farmer Query Support System is a comprehensive AI-powered agricultural platform designed to provide Indian
+        farmers
+        with instant access to expert advice, market information, and government schemes. Our mission is to bridge the
+        gap between
+        farmers and agricultural expertise, enabling better decision-making for improved crop yields and sustainable
+        farming practices.
       </p>
-      
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; margin-top: 2rem;">
-        <div style="background: rgba(255,255,255,0.1); padding: 1.5rem; border-radius: 8px; backdrop-filter: blur(10px);">
+
+      <div
+        style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; margin-top: 2rem;">
+        <div
+          style="background: rgba(255,255,255,0.1); padding: 1.5rem; border-radius: 8px; backdrop-filter: blur(10px);">
           <i class="fas fa-leaf" style="font-size: 2rem; margin-bottom: 1rem;"></i>
           <h4>Agriculture First</h4>
           <p style="margin: 0;">Designed specifically for the unique challenges of Indian agriculture</p>
         </div>
-        <div style="background: rgba(255,255,255,0.1); padding: 1.5rem; border-radius: 8px; backdrop-filter: blur(10px);">
+        <div
+          style="background: rgba(255,255,255,0.1); padding: 1.5rem; border-radius: 8px; backdrop-filter: blur(10px);">
           <i class="fas fa-robot" style="font-size: 2rem; margin-bottom: 1rem;"></i>
           <h4>AI-Powered</h4>
           <p style="margin: 0;">Advanced machine learning for accurate disease detection and predictions</p>
         </div>
-        <div style="background: rgba(255,255,255,0.1); padding: 1.5rem; border-radius: 8px; backdrop-filter: blur(10px);">
+        <div
+          style="background: rgba(255,255,255,0.1); padding: 1.5rem; border-radius: 8px; backdrop-filter: blur(10px);">
           <i class="fas fa-globe" style="font-size: 2rem; margin-bottom: 1rem;"></i>
           <h4>Multilingual Support</h4>
           <p style="margin: 0;">Access advice in your preferred language - 8 languages supported</p>
@@ -260,7 +458,7 @@
   <section style="padding: 4rem 0; background: white; color: #333; text-align: center;">
     <div class="container">
       <h2 style="margin-bottom: 3rem; color: #333;">Trusted by Farmers Nationwide</h2>
-      
+
       <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem;">
         <div>
           <h3 style="font-size: 2.5rem; margin-bottom: 0.5rem;">5000+</h3>
@@ -286,8 +484,9 @@
   <section style="padding: 4rem 0; background: #f8f9fa;">
     <div class="container" style="text-align: center;">
       <h2 style="margin-bottom: 1rem;">Ready to Get Better Farming Advice?</h2>
-      <p style="font-size: 1.1rem; margin-bottom: 2rem; color: #666;">Join thousands of farmers who are using AI-powered advice to improve their yields</p>
-      
+      <p style="font-size: 1.1rem; margin-bottom: 2rem; color: #666;">Join thousands of farmers who are using AI-powered
+        advice to improve their yields</p>
+
       <a href="pages/register-enhanced.html" class="btn btn-primary" style="font-size: 1.1rem; padding: 1rem 3rem;">
         <i class="fas fa-arrow-right"></i> Get Started Today
       </a>
@@ -295,47 +494,57 @@
   </section>
 
   <!-- Contact Section -->
-  <section style="padding: 4rem 0; background: linear-gradient(135deg, #2ecc71 0%, #3498db 100%); color: white;" id="contact">
+  <section style="padding: 4rem 0; background: linear-gradient(135deg, #2ecc71 0%, #3498db 100%); color: white;"
+    id="contact">
     <div class="container">
       <h2 style="text-align: center; margin-bottom: 3rem; color: white;">Get In Touch</h2>
-      
+
       <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem;">
         <!-- Email Contact -->
-        <div style="background: rgba(255,255,255,0.1); padding: 2rem; border-radius: 8px; text-align: center; backdrop-filter: blur(10px);">
+        <div
+          style="background: rgba(255,255,255,0.1); padding: 2rem; border-radius: 8px; text-align: center; backdrop-filter: blur(10px);">
           <i class="fas fa-envelope" style="font-size: 2.5rem; margin-bottom: 1rem;"></i>
           <h3>Email Us</h3>
           <p style="margin: 1rem 0;">For general inquiries and support</p>
-          <a href="mailto:support@farmerquery.in" style="color: white; text-decoration: none; font-weight: 600; display: inline-block; padding: 0.5rem 1rem; background: rgba(255,255,255,0.2); border-radius: 6px; transition: background 0.3s;">
+          <a href="mailto:support@farmerquery.in"
+            style="color: white; text-decoration: none; font-weight: 600; display: inline-block; padding: 0.5rem 1rem; background: rgba(255,255,255,0.2); border-radius: 6px; transition: background 0.3s;">
             support@farmerquery.in
           </a>
         </div>
 
         <!-- Phone Contact -->
-        <div style="background: rgba(255,255,255,0.1); padding: 2rem; border-radius: 8px; text-align: center; backdrop-filter: blur(10px);">
+        <div
+          style="background: rgba(255,255,255,0.1); padding: 2rem; border-radius: 8px; text-align: center; backdrop-filter: blur(10px);">
           <i class="fas fa-phone" style="font-size: 2.5rem; margin-bottom: 1rem;"></i>
           <h3>Call Us</h3>
           <p style="margin: 1rem 0;">Toll-free agricultural support line</p>
-          <a href="tel:+918001234567" style="color: white; text-decoration: none; font-weight: 600; display: inline-block; padding: 0.5rem 1rem; background: rgba(255,255,255,0.2); border-radius: 6px; transition: background 0.3s;">
+          <a href="tel:+918001234567"
+            style="color: white; text-decoration: none; font-weight: 600; display: inline-block; padding: 0.5rem 1rem; background: rgba(255,255,255,0.2); border-radius: 6px; transition: background 0.3s;">
             1-800-FARM-HELP (3276-4357)
           </a>
         </div>
 
         <!-- Social Media -->
-        <div style="background: rgba(255,255,255,0.1); padding: 2rem; border-radius: 8px; text-align: center; backdrop-filter: blur(10px);">
+        <div
+          style="background: rgba(255,255,255,0.1); padding: 2rem; border-radius: 8px; text-align: center; backdrop-filter: blur(10px);">
           <i class="fas fa-share-alt" style="font-size: 2.5rem; margin-bottom: 1rem;"></i>
           <h3>Follow Us</h3>
           <p style="margin: 1rem 0;">Connect on social media for updates</p>
           <div style="display: flex; gap: 1rem; justify-content: center;">
-            <a href="#" style="color: white; font-size: 1.5rem; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
+            <a href="#" style="color: white; font-size: 1.5rem; transition: transform 0.3s;"
+              onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
               <i class="fab fa-facebook"></i>
             </a>
-            <a href="#" style="color: white; font-size: 1.5rem; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
+            <a href="#" style="color: white; font-size: 1.5rem; transition: transform 0.3s;"
+              onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
               <i class="fab fa-twitter"></i>
             </a>
-            <a href="#" style="color: white; font-size: 1.5rem; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
+            <a href="#" style="color: white; font-size: 1.5rem; transition: transform 0.3s;"
+              onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
               <i class="fab fa-whatsapp"></i>
             </a>
-            <a href="#" style="color: white; font-size: 1.5rem; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
+            <a href="#" style="color: white; font-size: 1.5rem; transition: transform 0.3s;"
+              onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
               <i class="fab fa-youtube"></i>
             </a>
           </div>
@@ -349,10 +558,10 @@
     <div class="container">
       <p>&copy; 2026 Farmer Query Support System. All rights reserved.</p>
       <p style="margin-top: 0.5rem; font-size: 0.9rem; opacity: 0.8;">
-        <a href="#features" style="color: inherit; text-decoration: none; margin: 0 0.5rem;">Features</a> • 
-        <a href="#how-it-works" style="color: inherit; text-decoration: none; margin: 0 0.5rem;">How It Works</a> • 
-        <a href="#about" style="color: inherit; text-decoration: none; margin: 0 0.5rem;">About</a> • 
-        <a href="#contact" style="color: inherit; text-decoration: none; margin: 0 0.5rem;">Contact</a> • 
+        <a href="#features" style="color: inherit; text-decoration: none; margin: 0 0.5rem;">Features</a> •
+        <a href="#how-it-works" style="color: inherit; text-decoration: none; margin: 0 0.5rem;">How It Works</a> •
+        <a href="#about" style="color: inherit; text-decoration: none; margin: 0 0.5rem;">About</a> •
+        <a href="#contact" style="color: inherit; text-decoration: none; margin: 0 0.5rem;">Contact</a> •
         <a href="pages/login-enhanced.html" style="color: inherit; text-decoration: none; margin: 0 0.5rem;">Login</a>
       </p>
     </div>
@@ -388,7 +597,7 @@
   <script>
     // Feature card hover effects
     document.querySelectorAll('.feature-card').forEach(card => {
-      card.addEventListener('mouseenter', function() {
+      card.addEventListener('mouseenter', function () {
         this.style.cursor = 'pointer';
       });
     });
@@ -411,7 +620,7 @@
         schemes: 'pages/schemes-preview.html',
         support: 'pages/expert-support-preview.html'
       };
-      
+
       // Redirect to preview page
       window.location.href = featurePages[feature];
     }
@@ -452,7 +661,7 @@
       };
 
       const featureData = features[feature];
-      
+
       const modal = document.createElement('div');
       modal.style.cssText = `
         position: fixed;
@@ -517,11 +726,30 @@
       document.body.appendChild(modal);
 
       // Close modal on outside click
-      modal.addEventListener('click', function(e) {
+      modal.addEventListener('click', function (e) {
         if (e.target === this) {
           this.remove();
         }
       });
+    }
+
+    // Handle Interactive Card Clicks
+    function handleMicClick() {
+      const token = localStorage.getItem('token') || localStorage.getItem('accessToken');
+      if (token) {
+        redirectToDashboard('voice');
+      } else {
+        showFeatureModal('voice');
+      }
+    }
+
+    function handleCameraClick() {
+      const token = localStorage.getItem('token') || localStorage.getItem('accessToken');
+      if (token) {
+        redirectToDashboard('image');
+      } else {
+        showFeatureModal('image');
+      }
     }
 
     // Redirect to dashboard with feature pre-selected
@@ -537,7 +765,7 @@
 
       const selectedTab = featureMap[feature];
       sessionStorage.setItem('selectedTab', selectedTab);
-      
+
       // Redirect based on user role
       const userStr = localStorage.getItem('user');
       let userRole = 'farmer';
@@ -562,6 +790,13 @@
 
     // Dynamic navigation based on auth state
     document.addEventListener('DOMContentLoaded', () => {
+      // Hide hero buttons if logged in
+      const isLoggedIn = localStorage.getItem('token') || localStorage.getItem('accessToken');
+      const heroButtons = document.querySelector('.hero-buttons');
+      if (isLoggedIn && heroButtons) {
+        heroButtons.style.display = 'none';
+      }
+
       const userStr = localStorage.getItem('user');
       const token = localStorage.getItem('token');
       if (userStr && token) {
@@ -575,7 +810,7 @@
             } else if (user.role === 'admin') {
               dashboardUrl = 'pages/admin-dashboard.html';
             }
-            
+
             navAuthLinks.innerHTML = `
               <a href="${dashboardUrl}" class="nav-link btn btn-primary" style="padding: 0.6rem 1.2rem; border-radius: 6px; font-weight: 600; display: flex; align-items: center; gap: 0.5rem; color: white !important; text-decoration: none;">
                 <i class="fas fa-columns"></i> Dashboard
@@ -591,7 +826,7 @@
       }
     });
 
-    window.logoutUser = function() {
+    window.logoutUser = function () {
       if (confirm('Are you sure you want to logout?')) {
         localStorage.removeItem('token');
         localStorage.removeItem('accessToken');
@@ -639,4 +874,5 @@
   </script>
   <script src="assets/js/chatbot-widget.js"></script>
 </body>
+
 </html>
